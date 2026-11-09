@@ -1,0 +1,19 @@
+<service>
+  <id>WarehouseSystem</id>
+  <name>سیستم انبار</name>
+  <description>سیستم انبار — http://127.0.0.1:3000</description>
+  <executable>C:\Program Files\nodejs\node.exe</executable>
+  <arguments>server.js</arguments>
+  <workingdirectory>C:\WarehouseSystem</workingdirectory>
+  <logpath>C:\WarehouseSystem\service\logs</logpath>
+  <log mode="roll-by-size">
+    <sizeThreshold>10240</sizeThreshold>
+    <keepFiles>5</keepFiles>
+  </log>
+  <onfailure action="restart" delay="10 sec" />
+  <onfailure action="restart" delay="30 sec" />
+  <onfailure action="restart" delay="60 sec" />
+  <resetfailure>1 hour</resetfailure>
+  <env name="PORT" value="3100" />
+  <env name="HTTPS_PORT" value="3543" />
+</service>

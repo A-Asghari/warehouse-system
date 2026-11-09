@@ -1,0 +1,1814 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1">
+<meta name="theme-color" content="#F5821F">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="مدیریت تولید">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="apple-touch-icon" href="./icons/icon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="./icons/icon-512.png">
+<link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png">
+<title>مدیریت تولید — موبایل</title>
+<link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
+<style>
+:root{
+  --bg:#F0F2F5; --card:#FFFFFF; --ink:#1E2420; --sub:#6B7268;
+  --line:#DDE0D8; --accent:#F5821F; --accent-l:#FDEEDD;
+  --warn:#854F0B; --warn-l:#FAEEDA;
+  --danger:#791F1F; --danger-l:#FCEBEB;
+  --purple:#3C3489; --purple-l:#EEEDFE;
+  --blue:#2563EB; --blue-l:#DBEAFE;
+  --green:#16a34a; --green-l:#dcfce7;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{overflow-x:hidden;width:100%;height:100%}
+body{font-family:'Vazirmatn',Tahoma,sans-serif;background:var(--bg);color:var(--ink);line-height:1.7;font-size:14px}
+button,input,select{font-family:'Vazirmatn',Tahoma,sans-serif}
+
+/* ===== ورود ===== */
+#login{display:flex;align-items:center;justify-content:center;min-height:100dvh;padding:22px;
+  background:radial-gradient(circle at 12% 88%, rgba(245,130,31,.22) 0%, transparent 45%),
+             radial-gradient(circle at 88% 12%, rgba(245,130,31,.14) 0%, transparent 42%),
+             linear-gradient(135deg,#0a0a0a 0%,#000 55%,#150d05 100%)}
+.login-box{background:#fff;border-radius:20px;padding:34px 24px 26px;width:100%;max-width:420px;text-align:center;
+  box-shadow:0 25px 70px rgba(0,0,0,.55);position:relative;overflow:hidden}
+.login-box::before{content:'';position:absolute;top:0;left:0;right:0;height:5px;background:linear-gradient(90deg,#F5821F,#FFB066,#F5821F)}
+.login-box img{max-width:200px;width:70%;height:auto;display:block;margin:4px auto 18px}
+.login-box h1{font-size:19px;font-weight:800;color:#111}
+.login-box .sub{color:#8a8a8a;font-size:13px;margin-bottom:22px}
+.fg{text-align:right;margin-bottom:14px}
+.fg label{display:block;font-weight:600;font-size:13px;color:#2c3e50;margin-bottom:4px}
+.fg input{width:100%;min-height:50px;padding:12px 16px;border:2px solid #e2e8f0;border-radius:10px;font-size:15px;background:#fafbfc;outline:none}
+.fg input:focus{border-color:var(--accent);box-shadow:0 0 0 4px rgba(245,130,31,.15)}
+.btn-login{width:100%;min-height:52px;background:linear-gradient(135deg,#F5821F,#E56A0C);color:#fff;border:none;border-radius:10px;font-size:16px;font-weight:700;box-shadow:0 8px 20px rgba(245,130,31,.35)}
+.btn-login:disabled{background:#c9c9c9;box-shadow:none}
+.login-status{font-size:13px;color:var(--sub);margin-top:10px;min-height:24px}
+.login-status.error{color:var(--danger)}
+
+/* ===== پوسته ===== */
+#app{display:none;flex-direction:column;height:100dvh}
+#app.on{display:flex}
+header{flex:none;background:#fff;border-bottom:1px solid var(--line);padding:calc(8px + env(safe-area-inset-top)) 14px 8px;display:flex;flex-direction:column;gap:8px}
+.hrow{display:flex;align-items:center;gap:10px}
+.hrow img{height:24px;width:auto;display:block}
+.htitle{flex:1;min-width:0;font-size:14.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.back{width:36px;height:36px;flex:none;border:1px solid var(--line);background:#fff;border-radius:10px;font-size:16px;color:var(--ink)}
+.badge-net{background:var(--green-l);color:var(--green);font-size:10px;font-weight:700;padding:3px 8px;border-radius:10px;flex:none}
+.badge-net.off{background:var(--danger-l);color:var(--danger)}
+.hrow2{display:flex;gap:6px;align-items:center}
+.pill-dept{background:var(--accent);color:#fff;font-size:11px;padding:2px 10px;border-radius:20px;flex:none}
+.hmeta{font-size:11.5px;color:var(--sub);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pill-fy{background:var(--accent-l);border:1px solid var(--accent);color:var(--warn);font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:8px}
+main{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:12px 12px 18px}
+nav{flex:none;background:#fff;border-top:1px solid var(--line);box-shadow:0 -4px 20px rgba(0,0,0,.06);display:flex;padding:6px 4px calc(8px + env(safe-area-inset-bottom))}
+nav button{flex:1;min-height:52px;border:none;background:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;position:relative;color:var(--sub);font-size:11px}
+nav button .bar{width:26px;height:4px;border-radius:3px;background:transparent}
+nav button.active{color:var(--accent);font-weight:700}
+nav button.active .bar{background:var(--accent)}
+nav .nbadge{position:absolute;top:2px;left:14px;background:var(--danger);color:#fff;border-radius:50%;min-width:18px;height:18px;font-size:9.5px;font-weight:700;display:flex;align-items:center;justify-content:center}
+
+/* ===== اجزا ===== */
+.stack{display:flex;flex-direction:column;gap:10px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:11px 12px;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.stats{display:flex;gap:8px}
+.stats .card{flex:1;padding:10px 12px;box-shadow:none}
+.stats .k{font-size:10.5px;color:var(--sub)}
+.stats .v{font-size:19px;font-weight:800}
+.chips{display:flex;gap:7px;overflow-x:auto;padding-bottom:2px}
+.chip{flex:none;min-height:44px;padding:0 16px;border-radius:22px;font-size:12.5px;border:1px solid var(--line);background:#fff;color:var(--sub);white-space:nowrap}
+.chip.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+.search{display:flex;align-items:center;gap:8px}
+.search input{flex:1;border:none;outline:none;font-size:13px;background:transparent;text-align:right;min-height:34px}
+.row-item{display:flex;align-items:center;gap:10px}
+.grow{flex:1;min-width:0}
+.code{font-size:9.5px;font-family:ui-monospace,Menlo,monospace;direction:ltr;text-align:right;color:var(--accent);font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.iname{font-size:13px;font-weight:600;line-height:1.5}
+.qty{font-size:15.5px;font-weight:800;direction:ltr;text-align:left}
+.unit{font-size:10.5px;color:var(--sub);text-align:left}
+.muted{color:var(--sub)}
+.empty{text-align:center;color:var(--sub);font-size:13px;padding:40px 8px}
+.lbl{font-size:11.5px;color:var(--sub);margin-bottom:8px}
+.opt{width:100%;min-height:52px;text-align:right;border-radius:10px;padding:9px 11px;border:1.5px solid var(--line);background:#fff;display:flex;flex-direction:column;gap:2px}
+.opt.on{border-color:var(--accent);background:var(--accent-l)}
+.opt .iname{color:var(--ink)}
+.stepper{display:flex;align-items:center;gap:10px}
+.stepper .minus,.stepper .plus{width:52px;height:52px;border-radius:12px;font-size:24px;flex:none}
+.stepper .minus{border:1px solid var(--line);background:var(--bg);color:var(--ink)}
+.stepper .plus{border:none;background:var(--accent);color:#fff}
+.stepper input{flex:1;min-width:0;text-align:center;font-size:24px;font-weight:800;direction:ltr;border:1px solid var(--line);border-radius:12px;min-height:52px;outline:none}
+.presets{display:flex;gap:6px;margin-top:10px}
+.presets button{flex:1;min-height:40px;border:1px solid var(--line);background:#fff;border-radius:9px;font-size:12px;direction:ltr}
+.note-input{width:100%;min-height:46px;border:1px solid var(--line);border-radius:10px;padding:8px 11px;font-size:13px;text-align:right;outline:none}
+.submit{width:100%;min-height:52px;border:none;border-radius:12px;color:#fff;font-size:15px;font-weight:700}
+.submit[disabled]{opacity:.55}
+.action{width:100%;min-height:96px;background:#fff;border:1px solid var(--line);border-radius:14px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:4px;padding:14px;text-align:right}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.action .t{font-size:14.5px;font-weight:700}
+.action .d{font-size:11px;color:var(--sub);line-height:1.6}
+.bom{background:var(--accent-l);border:1px solid var(--accent);border-radius:12px;padding:12px}
+.bom .t{font-size:12.5px;font-weight:700}
+.bom .h{font-size:10.5px;color:var(--warn);margin-bottom:9px}
+.doc-top{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px}
+.doc-no{font-weight:800;font-size:12px;color:var(--accent);direction:ltr}
+.doc-status{padding:2px 10px;border-radius:12px;font-size:10.5px;font-weight:700;white-space:nowrap}
+.doc-type{font-size:13.5px;font-weight:700;margin-bottom:8px}
+.doc-item{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-size:13px;padding-bottom:7px;border-bottom:1px dashed var(--line)}
+.doc-item b{font-weight:800;white-space:nowrap;direction:ltr}
+.doc-route{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--sub);margin:7px 0 4px;flex-wrap:wrap}
+.doc-route .a{color:var(--accent);font-weight:700}
+.doc-meta{display:flex;justify-content:space-between;font-size:11px;color:var(--sub);gap:8px}
+.doc-note{font-size:11.5px;color:var(--sub);background:var(--bg);border-radius:8px;padding:5px 8px;margin-top:6px}
+.doc-actions{display:flex;gap:8px;margin-top:11px;padding-top:9px;border-top:1px solid var(--line)}
+.doc-actions button{flex:1;min-height:44px;border-radius:10px;font-size:13px;font-weight:700}
+.ok-btn{background:var(--green);color:#fff;border:none}
+.no-btn{background:#fff;color:var(--danger);border:1px solid var(--danger)}
+.mid-btn{background:#fff;color:#2563EB;border:1px solid #2563EB}
+.link{width:100%;min-height:64px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:10px;text-align:right}
+.link .t{font-size:14px;font-weight:700}
+.link .d{font-size:11px;color:var(--sub);line-height:1.6}
+.link .go{color:var(--accent);font-size:16px}
+.kv{display:flex;align-items:center;gap:10px;font-size:13.5px}
+.kv .v{font-size:11.5px;color:var(--sub);direction:ltr}
+.tx{display:flex;align-items:center;gap:10px}
+.tx .stripe{width:4px;align-self:stretch;border-radius:4px;flex:none}
+.logout{width:100%;min-height:48px;background:var(--danger);color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:700}
+.avatar{width:48px;height:48px;border-radius:50%;background:var(--accent-l);border:1px solid var(--accent);display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:800;color:var(--accent);flex:none}
+#toast{position:fixed;left:12px;right:12px;bottom:calc(22px + env(safe-area-inset-bottom));background:var(--green);color:#fff;border-radius:12px;padding:11px 14px;font-size:12.5px;font-weight:700;box-shadow:0 4px 20px rgba(0,0,0,.2);z-index:99;opacity:0;transform:translateY(14px);transition:all .25s;pointer-events:none}
+#toast.show{opacity:1;transform:none}
+#app.on ~ #toast{bottom:calc(74px + env(safe-area-inset-bottom))}
+#toast.err{background:var(--danger)}
+.spin{display:inline-block;width:15px;height:15px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:sp .7s linear infinite;vertical-align:-3px}
+@keyframes sp{to{transform:rotate(360deg)}}
+.ichips{display:inline-flex;flex-wrap:wrap;gap:3px;margin-top:3px}
+.ichip{display:inline-flex;align-items:center;gap:3px;font-size:10.5px;line-height:1.6;padding:0 7px;border-radius:999px;background:#EEF2F7;color:#334155;white-space:nowrap;font-weight:600}
+.ichip.b{background:#E8F0FE;color:#1E40AF}.ichip.p{background:#F3E8FF;color:#6B21A8}.ichip.l{background:#ECFDF5;color:#065F46}
+.ichip .dot{width:9px;height:9px;border-radius:50%;border:1px solid #9CA3AF;display:inline-block}
+.pick-search{width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:10px;font-family:inherit;font-size:14px;margin-bottom:8px;box-sizing:border-box}
+.opt .vcount{font-size:11px;color:var(--accent,#F5821F);font-weight:700}
+</style>
+</head>
+<body>
+
+<div id="login">
+  <div class="login-box">
+    <img src="../logo-transparent.png" alt="VSMART">
+    <h1>مدیریت تولید</h1>
+    <div class="sub">نسخه موبایل</div>
+    <div class="fg"><label>نام کاربری</label><input id="lu" type="text" autocomplete="username" autocapitalize="off"></div>
+    <div class="fg"><label>رمز عبور</label><input id="lp" type="password" autocomplete="current-password"></div>
+    <button class="btn-login" id="lbtn">ورود</button>
+    <div class="login-status" id="lmsg"></div>
+  </div>
+</div>
+
+<div id="app">
+  <header>
+    <div class="hrow">
+      <button class="back" id="backBtn" style="display:none">&#8594;</button>
+      <img src="../logo-transparent.png" alt="VSMART">
+      <div class="htitle" id="title">موجودی بخش</div>
+      <span class="badge-net" id="net">آنلاین</span>
+    </div>
+    <div class="hrow2">
+      <span class="pill-dept" id="deptPill">—</span>
+      <span class="hmeta" id="meta">—</span>
+      <span class="pill-fy" id="fy">—</span>
+    </div>
+  </header>
+  <main id="view"></main>
+  <nav id="nav"></nav>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// جستجو با «ی/ي»، «ک/ك» و نیم‌فاصله/فاصله فرقی نکند: نام‌های سپیدار حروف عربی دارند و کاربر فارسی تایپ می‌کند (و برعکس).
+// String.prototype.includes فقط وقتی یکی از دو طرف این حروف را دارد هر دو را یکسان می‌کند؛ بقیه‌ی رفتار عوض نمی‌شود.
+(function () {
+  const orig = String.prototype.includes, re = /[\u064A\u0643\u0649\u200C]/, n = s => s.replace(/[\u064A\u0649]/g, '\u06CC').replace(/\u0643/g, '\u06A9').replace(/\u200C/g, ' ');
+  String.prototype.includes = function (search, pos) {
+    const a = String(this), b = String(search);
+    return (re.test(a) || re.test(b)) ? orig.call(n(a), n(b), pos) : orig.call(a, b, pos);
+  };
+})();
+</script>
+<script>
+const API = window.location.origin;
+
+const DEPTS = [
+  {id:'raw', name:'انبار مواد اولیه', type:'wh'},
+  {id:'cut', name:'برش', type:'stage'},
+  {id:'solder', name:'لحیم', type:'stage'},
+  {id:'qc', name:'کنترل کیفیت', type:'qc'},
+  {id:'inject', name:'تزریق', type:'stage'},
+  {id:'laser', name:'لیزر', type:'stage'},
+  {id:'pack', name:'بسته‌بندی', type:'stage'},
+  {id:'finished', name:'انبار محصول', type:'wh'}
+];
+const STAGE_SEQUENCE = ['cut','solder','inject','laser','pack','qc'];
+const STAGE_DEPTS = ['cut','solder','inject','laser','pack'];
+
+// اضافاتِ ساخته‌شده از «رسید انبار» سپیدار (منطق موجودی همان اضافات است) با نام واقعی‌اش نشان داده می‌شود
+function docTypeLabel(d){ return (d.type==='excess' && d.source==='sepidar') ? 'رسید انبار' : (TYPE_LABELS[d.type]||d.type); }
+const TYPE_LABELS = {production:'تولید', consume:'مصرف', output:'خروج به بخش دیگر', 'return':'برگشت از خروج',
+  waste:'ضایعات', shortage:'کسری', excess:'اضافات', receipt:'رسید انبار', initial:'موجودی اولیه', input:'ورود از بخش', dispatch:'حواله ارسال بار', rework:'🔧 برگشت معیوب'};
+const STATUS_LABELS = {pending_dispatch:'در انتظار ارسال', pending:'در انتظار تایید گیرنده', pending_warehouse:'در انتظار تایید انباردار', pending_production:'در انتظار تایید انباردار (تولید)',
+  pending_approval:'در انتظار تایید سرپرست/مدیر', approved:'تایید شده', rejected:'رد شده', cancelled:'لغو شده',
+  return_pending:'در انتظار تایید برگشت', return_approved:'برگشت تایید شده', return_rejected:'برگشت لغو شده', returned:'برگشت خورده'};
+const STATUS_COLORS = {pending:'#854F0B', pending_warehouse:'#3C3489', pending_production:'#3C3489', pending_approval:'#854F0B', approved:'#16a34a',
+  rejected:'#791F1F', cancelled:'#791F1F', return_pending:'#2563EB', return_approved:'#16a34a', return_rejected:'#791F1F', returned:'#854F0B'};
+const STATUS_BG = {pending:'#FAEEDA', pending_warehouse:'#EEEDFE', pending_production:'#EEEDFE', pending_approval:'#FAEEDA', approved:'#dcfce7',
+  rejected:'#FCEBEB', cancelled:'#FCEBEB', return_pending:'#DBEAFE', return_approved:'#dcfce7', return_rejected:'#FCEBEB', returned:'#FAEEDA'};
+const AWAITING = ['pending','pending_warehouse','pending_production','pending_approval','return_pending'];
+const MINUS_TYPES = ['consume','waste','output','shortage'];
+
+const FORMS = {
+  production:{title:'ثبت تولید', submit:'ثبت تولید', color:'#3C3489'},
+  consume:{title:'ثبت مصرف', submit:'ثبت مصرف', color:'#791F1F', itemLabel:'کالای مصرفی از موجودی بخش'},
+  output:{title:'خروج به بخش دیگر', submit:'ثبت خروج', color:'#F5821F', itemLabel:'کالای ارسالی'},
+  waste:{title:'ثبت ضایعات', submit:'ثبت ضایعات', color:'#791F1F', itemLabel:'کالای ضایع‌شده'},
+  adjust:{title:'کسری و اضافات', submit:'ثبت تعدیل', color:'#2563EB', itemLabel:'کالای مورد تعدیل'}
+};
+const TITLES = {dash:'موجودی بخش', docs:'اسناد', new:'ثبت سند جدید', reports:'گزارش‌ها', more:'حساب و تنظیمات',
+  cardex:'کاردکس کالا', daily:'گزارش عملکرد روزانه', history:'تاریخچه تراکنش‌ها', 'return':'سند برگشتی', dispatch:'حواله ارسال بار', rework:'🔧 برگشت معیوب'};
+const PARENT = {production:'new', consume:'new', output:'new', waste:'new', adjust:'new', 'return':'new', dispatch:'new', rework:'new', cardex:'reports', daily:'reports', history:'reports'};
+const NAV = [{id:'dash',label:'موجودی'},{id:'docs',label:'اسناد'},{id:'new',label:'ثبت'},{id:'reports',label:'گزارش‌ها'},{id:'more',label:'بیشتر'}];
+
+let user = null;
+let D = {items:[], users:[], inventory:{}, transactions:[], docs:[], productDefinitions:{}, fiscalYears:[], activeFiscalYear:''};
+let S = {screen:'dash', dept:null, query:'', docFilter:'awaiting', item:null, target:null, qty:1, note:'',
+         adjustType:'shortage', cardexItem:null, materials:null, busy:false,
+         availDept:null, availProducts:null, postProd:false};
+let dataVersion = -1;
+
+/* ===== کمکی‌ها (هم‌نام و هم‌رفتار با نسخه وب) ===== */
+const $ = id => document.getElementById(id);
+function fmt(n){ if(n===undefined||n===null) return '0'; return Number(n).toLocaleString('fa-IR', { maximumFractionDigits: 4 }); }
+function deptName(id){ const d = DEPTS.find(x=>x.id===id); return d?d.name:(id||''); }
+function findDef(code){
+  for(const dept of Object.keys(D.productDefinitions||{})){
+    const p = (D.productDefinitions[dept]||[]).find(x=>x.code===code);
+    if(p) return p;
+  }
+  // کدِ رنگی (…@مشکی) = تعریفِ پایه + رنگ (همان قانونِ سرور و نسخه‌ی وب)
+  const sc = splitColorKey(code);
+  if(sc.colorSlug){
+    const color = colorBySlugM(sc.colorSlug);
+    const b = color && findDef(sc.base);
+    if(b) return Object.assign({}, b, {code, name: b.name+' - '+color, color});
+  }
+  return null;
+}
+/* ===== رنگِ کابل: در برش انتخاب می‌شود و با کالا تا انبار محصول می‌رود؛ «سفید» پیش‌فرض و بدون پسوند ===== */
+const DEFAULT_COLOR = 'سفید';
+const COLOR_DEPTS_M = ['cut','solder','inject','laser','pack'];
+const COLOR_DOTS_M = {'سفید':'⚪','مشکی':'⚫','طوسی':'🔘'};
+function colorListM(){ const l = ((D.appSettings||{}).colors) || ['سفید','مشکی','طوسی']; return [DEFAULT_COLOR].concat(l.filter(c=>c && c!==DEFAULT_COLOR)); }
+function colorSlugM(s){ return String(s||'').replace(/ي/g,'ی').replace(/ك/g,'ک').trim().replace(/^پک\s+/,'').replace(/\s+/g,'_').replace(/-/g,'_'); }
+function splitColorKey(code){ const s = String(code==null?'':code); const i = s.indexOf('@'); return i<0 ? {base:s, colorSlug:null} : {base:s.slice(0,i), colorSlug:s.slice(i+1)}; }
+function baseKey(code){ return splitColorKey(code).base; }
+function colorBySlugM(slug){ return colorListM().find(c=>colorSlugM(c)===slug) || null; }
+function withColorKey(code, color){ const b = baseKey(code); return (!color || color===DEFAULT_COLOR) ? b : b+'@'+colorSlugM(color); }
+function stockAnyColor(inv, code){ return Object.keys(inv||{}).filter(k=>baseKey(k)===code).reduce((s,k)=>s+(inv[k]||0),0); }
+function isStageKeyM(code){ return /^(CUT|SOL|INJ|LASER|PACK)-/.test(String(code||'')); }
+// پکِ سفارشیِ تفکیک‌شده: «003000184~FAONE~VS_600_TC_2m» ← «پک FAONE-VS-600 TC 2m»
+function packVariantM(code){
+  const s=String(code==null?'':code); if(s.indexOf('~')<0) return null;
+  const m=s.split('@')[0].match(/^([^~]+)~([^~]+)~([^~]+)$/); if(!m) return null;
+  const reg=((D.appSettings||{}).packVariants||{})[m[0]];
+  if(reg) return {base:reg.base, brand:reg.brand, cable:reg.cable, name:reg.name};
+  const brand=variantSlugNameM(m[2]), cable=m[3].replace(/^VS_/,'VS-').replace(/_/g,' ');
+  return {base:m[1], brand, cable, name:'پک '+brand+'-'+cable};
+}
+function itemName(code){
+  const it = D.items.find(i=>i.code===code);
+  if(it) return it.name;
+  { const pv=packVariantM(code); if(pv) return pv.name; }
+  const d = findDef(code);
+  if(d) return d.name;
+  for(const dept of Object.keys(D.productDefinitions||{})){
+    const p = (D.productDefinitions[dept]||[]).find(x=>x.productCode===code);
+    if(p) return p.sepidarName || p.name;
+  }
+  return code;
+}
+// ===== نامِ کوتاه + خصوصیات (برند/پک/رنگ/طول) - فقط نمایش؛ همان قانونِ نسخه‌ی وب =====
+function variantSlugNameM(slug){ const a=(D.appSettings||{}); const l=(a.brands||[]).concat(a.packTypes||[]); return l.find(x=>colorSlugM(x)===slug) || String(slug||'').replace(/_/g,' '); }
+function itemPartsM(code){
+  const s=String(code==null?'':code), b=baseKey(s), sc=splitColorKey(s);
+  const isStage=/^(CUT|SOL|INJ|LASER|PACK)-/.test(b);
+  const color = isStage ? (sc.colorSlug ? (colorBySlugM(sc.colorSlug)||sc.colorSlug) : DEFAULT_COLOR) : null;
+  const attrs=[]; let groupKey=b, baseName;
+  { const pv=packVariantM(b); if(pv){ const bn=itemName(pv.base); return {code:s, groupKey:pv.base, baseName:bn===pv.base?'پک سفارشی':bn, attrs:[{k:'پک',v:pv.brand,c:'p'},{k:'نوع کابل',v:pv.cable,c:'l'}], color:null}; } }
+  const m=b.match(/^(CUT|SOL|INJ|LASER|PACK)-(.+)$/); const def=m?findDef(b):null;
+  if(m && m[1]==='CUT'){ const i=m[2].lastIndexOf('-'); const mat=i>0?m[2].slice(0,i):m[2], len=i>0?m[2].slice(i+1):''; groupKey='CUT-'+mat; baseName=itemName(mat); if(len) attrs.push({k:'طول',v:len+' سانت',c:'l'}); }
+  else if(m && (m[1]==='LASER'||m[1]==='PACK')){ const p=m[2].split('-'); groupKey=m[1]+'-'+p[0]; baseName=(def&&def.sepidarName)||itemName(p[0]);
+    attrs.push({k:'برند',v:(def&&def.brand)||variantSlugNameM(p[1]),c:'b'}); if(m[1]==='PACK') attrs.push({k:'پک',v:(def&&def.packType)||variantSlugNameM(p[2]),c:'p'}); }
+  else baseName=(def&&def.name)||itemName(b);
+  if(color && color!==DEFAULT_COLOR) attrs.push({k:'رنگ',v:color,c:'color'});
+  return {code:s, groupKey, baseName:baseName||s, attrs, color};
+}
+const COLOR_HEX_M={'سفید':'#ffffff','مشکی':'#111111','طوسی':'#9CA3AF'};
+function chipsM(p, withWhite){
+  const l=p.attrs.slice(); if(withWhite && p.color===DEFAULT_COLOR) l.push({k:'رنگ',v:DEFAULT_COLOR,c:'color'});
+  if(!l.length) return '';
+  return '<span class="ichips">'+l.map(a=>a.c==='color' ? '<span class="ichip"><span class="dot" style="background:'+(COLOR_HEX_M[a.v]||'#ddd')+'"></span>'+esc(a.v)+'</span>'
+    : '<span class="ichip '+a.c+'">'+(a.k==='پک' && !/^پک/.test(a.v)?'پک ':'')+esc(a.v)+'</span>').join('')+'</span>';
+}
+function itemNameHtmlM(code, withWhite){ const p=itemPartsM(code); return '<span>'+esc(p.baseName)+'</span>'+(p.attrs.length||withWhite?'<br>':'')+chipsM(p, withWhite); }
+// فهرستِ دومرحله‌ای: اول محصولِ پایه، بعد نسخه (برند/پک/رنگ/طول). onPick نامِ تابعی است که با کد صدا زده می‌شود.
+function twoStepList(codes, qtyOf, onPick, selected){
+  const q=(S.pickQuery||'').trim().toLowerCase().split(/\s+/).filter(Boolean);
+  const all=codes.map(c=>({c, p:itemPartsM(c)}));
+  const hay=x=>(x.p.baseName+' '+x.c+' '+x.p.attrs.map(a=>a.v).join(' ')+' '+(x.p.color||'')).toLowerCase();
+  const list=all.filter(x=>q.every(w=>hay(x).includes(w)));
+  const search='<input class="pick-search" placeholder="جستجو: نام، کد، برند، رنگ…" value="'+esc(S.pickQuery||'')+'" oninput="S.pickQuery=this.value;S.pickGroup=null;render();var e=document.querySelector(\'.pick-search\');if(e){e.focus();e.setSelectionRange(e.value.length,e.value.length);}">';
+  const btn=(x,label)=>'<button class="opt'+(selected===x.c?' on':'')+'" onclick="'+onPick+'(\''+esc(x.c)+'\')"><span class="code">'+esc(baseKey(x.c))+'</span><span class="iname">'+label+'</span><span class="unit" style="text-align:right">'+qtyOf(x.c)+'</span></button>';
+  if(S.pickGroup){
+    const vs=list.filter(x=>x.p.groupKey===S.pickGroup);
+    if(vs.length) return search+'<button class="chip" style="margin-bottom:8px" onclick="S.pickGroup=null;render()">→ بازگشت به فهرست</button>'+
+      '<div style="font-weight:700;margin:4px 2px 6px">'+esc(vs[0].p.baseName)+'</div>'+vs.map(x=>btn(x, chipsM(x.p,true)||esc(x.p.baseName))).join('');
+  }
+  const groups=new Map(); list.forEach(x=>{ if(!groups.has(x.p.groupKey)) groups.set(x.p.groupKey,[]); groups.get(x.p.groupKey).push(x); });
+  if(!groups.size) return search+'<div class="empty">موردی پیدا نشد</div>';
+  let html=search;
+  groups.forEach((vs,g)=>{
+    if(vs.length===1){ html+=btn(vs[0], itemNameHtmlM(vs[0].c)); return; }
+    const on = vs.some(x=>x.c===selected);
+    html+='<button class="opt'+(on?' on':'')+'" onclick="S.pickGroup=\''+esc(g)+'\';render()"><span class="code">'+esc(g)+'</span><span class="iname">'+esc(vs[0].p.baseName)+'</span><span class="vcount">'+fmt(vs.length)+' نسخه — انتخاب برند/پک/رنگ ◂</span></button>';
+  });
+  return html;
+}
+function itemUnit(code){
+  const it = D.items.find(i=>i.code===code);
+  if(it) return it.unit||'عدد';
+  for(const dept of Object.keys(D.productDefinitions||{})){
+    const p = (D.productDefinitions[dept]||[]).find(x=>x.code===code||x.productCode===code);
+    if(p) return p.unit||'عدد';
+  }
+  return 'عدد';
+}
+function materialCode(m){
+  // سرور (bom/suggest) کدِ دقیقِ موجودیِ هر ماده را می‌دهد (CUT-/SOL-/INJ-/LASER-/...)؛ حدس از نام فقط برای سازگاری
+  if(m && m.code && (D.items.some(i=>i.code===m.code) || findDef(m.code))) return m.code;
+  const it = D.items.find(i=>i.name===m.name);
+  if(it) return it.code;
+  for(const dept of Object.keys(D.productDefinitions||{})){
+    const p = (D.productDefinitions[dept]||[]).find(x=>x.name===m.name);
+    if(p && p.productCode) return p.productCode;
+  }
+  return m.code || m.name;
+}
+function myDeptId(){
+  const d = DEPTS.find(x=>x.name===user.unit);
+  return d ? d.id : null;
+}
+function privileged(){ return user && user.role !== 'user'; }
+// معادلِ canAccessSection() نسخه‌ی وب - ماتریسِ appSettings.rolePermissions (که فقط مدیر از
+// تنظیمات وب می‌تونه ویرایش کنه) رو رعایت می‌کنه؛ مدیر همیشه به همه‌چیز دسترسی داره، بقیه‌ی
+// نقش‌ها فقط به sectionِهایی که توی ماتریس براشون تیک خورده. اگه این محدودیت اینجا رعایت
+// نشه، یعنی مدیر از وب یه بخش رو برای نقشی می‌بنده ولی همون نقش از موبایل بدون محدودیت
+// بهش دسترسی داره - دقیقاً همون سوراخی که نباید باشه.
+const SCREEN_SECTION = {dash:'sec-dashboard', production:'sec-production', consume:'sec-consume',
+  output:'sec-output', 'return':'sec-output', rework:'sec-output', waste:'sec-waste', adjust:'sec-adjust', docs:'sec-documents',
+  cardex:'sec-cardex', daily:'sec-daily-report', history:'sec-history'};
+function canAccessSection(sectionId){
+  if(!user) return false;
+  if(user.role==='admin') return true;
+  const rp = (D.appSettings && D.appSettings.rolePermissions) || {};
+  return (rp[user.role]||[]).includes(sectionId);
+}
+function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+// امروز به وقتِ تهران به‌صورت {y,m,d}
+function jalaliTodayT(){
+  const p = Object.fromEntries(new Intl.DateTimeFormat('en-u-ca-persian-nu-latn',{timeZone:'Asia/Tehran',year:'numeric',month:'numeric',day:'numeric'}).formatToParts(new Date()).map(x=>[x.type,+x.value]));
+  return {y:p.year, m:p.month, d:p.day};
+}
+function normFa(s){
+  const t = String(s==null?'':s).trim().replace(/[۰-۹]/g,c=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(c));
+  const x = t.match(/^(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})$/);
+  return x ? x[1]+'/'+x[2].padStart(2,'0')+'/'+x[3].padStart(2,'0') : t;
+}
+function todayFa(){ const t = jalaliTodayT(); return t.y+'/'+String(t.m).padStart(2,'0')+'/'+String(t.d).padStart(2,'0'); }
+// کبیسه: قاعدهٔ ۳۳ ساله‌ی تقویم رسمی (۱۴۰۳، ۱۴۰۸، ۱۴۱۲، ۱۴۱۶، ۱۴۲۰ ...)
+function jLeap(y){ return (25*y+11)%33 < 8; }
+function jDays(y,m){ return m<=6 ? 31 : (m<=11 ? 30 : (jLeap(y)?30:29)); }
+const JMONTHS = ['فروردین','اردیبهشت','خرداد','تیر','مرداد','شهریور','مهر','آبان','آذر','دی','بهمن','اسفند'];
+// تاریخِ سند: پیش‌فرض امروز؛ اگر کاربر دستی عوض کند همان می‌ماند تا ثبتِ موفق
+function docDateObj(){
+  if(!S.docDate || !S.docDateUser) S.docDate = jalaliTodayT();
+  return S.docDate;
+}
+function docDateStr(){ const d = docDateObj(); return d.y+'/'+String(d.m).padStart(2,'0')+'/'+String(d.d).padStart(2,'0'); }
+function setDocDatePart(part, val){
+  const d = docDateObj(), t = jalaliTodayT();
+  d[part] = +val; d.d = Math.min(d.d, jDays(d.y, d.m));
+  if(d.y*10000+d.m*100+d.d > t.y*10000+t.m*100+t.d){ S.docDate = t; }
+  S.docDateUser = true;
+  render();
+}
+function resetDocDate(){ S.docDateUser = false; S.docDate = null; }
+function dateCard(){
+  const d = docDateObj(), t = jalaliTodayT();
+  const fy = parseInt(D.activeFiscalYear) || t.y;
+  const fut = (y,mo,da) => y*10000+mo*100+da > t.y*10000+t.m*100+t.d;
+  const yOpts = [fy].map(y=>'<option value="'+y+'"'+(y===d.y?' selected':'')+(fut(y,1,1)?' disabled':'')+'>'+y+'</option>').join('');
+  const mOpts = JMONTHS.map((n,i)=>'<option value="'+(i+1)+'"'+(i+1===d.m?' selected':'')+(fut(d.y,i+1,1)?' disabled':'')+'>'+n+'</option>').join('');
+  let dOpts = ''; for(let k=1;k<=jDays(d.y,d.m);k++) dOpts += '<option value="'+k+'"'+(k===d.d?' selected':'')+(fut(d.y,d.m,k)?' disabled':'')+'>'+k+'</option>';
+  const sel = 'style="flex:1;min-height:44px;font:inherit;padding:0 6px;border:1px solid var(--line,#ddd);border-radius:10px;background:var(--card,#fff);color:inherit"';
+  return '<div class="card"><div class="lbl">📅 تاریخ سند ('+esc(docDateStr())+')</div><div style="display:flex;gap:8px">'+
+    '<select aria-label="روز" '+sel+' onchange="setDocDatePart(\'d\',this.value)">'+dOpts+'</select>'+
+    '<select aria-label="ماه" '+sel+' onchange="setDocDatePart(\'m\',this.value)">'+mOpts+'</select>'+
+    '<select aria-label="سال" '+sel+' onchange="setDocDatePart(\'y\',this.value)">'+yOpts+'</select></div></div>';
+}
+// ===== مدالِ پیام‌ها (موبایل): هشدار/خطا وسطِ صفحه و تا «تایید» بسته نمی‌شود =====
+const _mq = []; let _mOpen = false; let _mLast = { t: '', at: 0 };
+function _mRoot(){
+  let r = document.getElementById('appModalOverlay');
+  if(r) return r;
+  r = document.createElement('div'); r.id = 'appModalOverlay'; r.dir = 'rtl';
+  r.style.cssText = 'display:none;position:fixed;inset:0;background:rgba(15,23,42,.62);z-index:2147483000;align-items:center;justify-content:center;padding:16px;font-family:inherit';
+  r.innerHTML = '<div role="alertdialog" aria-modal="true" style="background:#fff;border-radius:16px;max-width:420px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.4);overflow:hidden">'+
+    '<div id="appModalHead" style="padding:12px 16px;font-weight:800;font-size:15px;color:#fff"></div>'+
+    '<div id="appModalBody" style="padding:16px;white-space:pre-line;line-height:2;font-size:14px;color:#1f2937;max-height:60vh;overflow:auto"></div>'+
+    '<div id="appModalActions" style="padding:12px 16px;display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;border-top:1px solid #e5e7eb;background:#f9fafb"></div></div>';
+  document.body.appendChild(r); return r;
+}
+function _mNext(){
+  if(_mOpen || !_mq.length) return;
+  const it = _mq.shift(); _mOpen = true;
+  const r = _mRoot(); const col = {error:'#b91c1c', warn:'#b45309', info:'#1d4ed8'};
+  const h = r.querySelector('#appModalHead'); h.style.background = col[it.kind] || col.info; h.textContent = it.title;
+  r.querySelector('#appModalBody').textContent = it.message;
+  const a = r.querySelector('#appModalActions'); a.innerHTML = '';
+  const done = v => { r.style.display = 'none'; _mOpen = false; it.resolve(v); setTimeout(_mNext, 30); };
+  it.buttons.forEach(b => {
+    const btn = document.createElement('button'); btn.type = 'button'; btn.textContent = b.label;
+    btn.style.cssText = 'padding:10px 20px;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;color:#fff;background:'+(b.primary ? (col[it.kind]||'#1d4ed8') : '#6b7280');
+    btn.onclick = () => done(b.value); a.appendChild(btn);
+  });
+  r.style.display = 'flex'; const f = a.querySelector('button'); if(f) setTimeout(()=>f.focus(), 0);
+}
+function alertModal(msg, kind){
+  const text = String(msg == null ? '' : msg).trim(); if(!text) return Promise.resolve();
+  const now = Date.now(); if(_mLast.t === text && now - _mLast.at < 1500) return Promise.resolve();
+  if(_mq.some(q => q.message === text)) return Promise.resolve();
+  _mLast = { t: text, at: now };
+  const k = kind || (/^(⚠️|⚠)/.test(text) ? 'warn' : 'error');
+  return new Promise(res => { _mq.push({ message: text, kind: k, title: k === 'warn' ? '⚠️ هشدار' : '⛔ پیام سیستم', buttons: [{ label: 'تایید', value: true, primary: true }], resolve: res }); _mNext(); });
+}
+function confirmModal(msg, opts){
+  opts = opts || {};
+  return new Promise(res => { _mq.push({ message: String(msg), kind: opts.kind || 'warn', title: opts.title || '⚠️ هشدار',
+    buttons: [{ label: opts.cancelLabel || 'انصراف', value: false }, { label: opts.confirmLabel || 'تایید و ادامه', value: true, primary: true }], resolve: res }); _mNext(); });
+}
+function toast(msg, err){
+  if(err || /^(⚠️|⚠)/.test(String(msg || '').trim())){ alertModal(msg, err && !/^(⚠️|⚠)/.test(String(msg || '').trim()) ? 'error' : undefined); return; }
+  const t = $('toast'); t.textContent = msg; t.className = 'show';
+  clearTimeout(t._t); t._t = setTimeout(()=>t.className='', 3800);
+}
+// توکنِ نشست (ورود در سرور) - روی همه‌ی درخواست‌ها
+function mToken(){ try{ return localStorage.getItem('warehouseMobileToken') || ''; }catch(e){ return ''; } }
+async function api(path, opts){
+  const o = Object.assign({}, opts||{});
+  o.headers = Object.assign({'Content-Type':'application/json'}, o.headers||{});
+  if(mToken()) o.headers.Authorization = 'Bearer ' + mToken();
+  let res = await fetch(API + path, o);
+  let body = null;
+  try { body = await res.json(); } catch(e){}
+  // «عددِ غیرعادی»: تایید و ارسالِ دوباره با confirmLarge
+  if(res.status === 409 && body && body.needsConfirm && typeof o.body === 'string' && confirm(body.error)){
+    const b = JSON.parse(o.body); b.confirmLarge = true;
+    res = await fetch(API + path, Object.assign({}, o, {body: JSON.stringify(b)}));
+    body = null; try { body = await res.json(); } catch(e){}
+  }
+  if(res.status === 401 && path.indexOf('/api/auth/login') !== 0 && user){ logout(); $('lmsg').className='login-status error'; $('lmsg').textContent='نشست شما تمام شده؛ دوباره وارد شوید'; }
+  if(!res.ok || (body && body.success === false)) throw new Error((body && body.error) || 'خطای سرور');
+  return body;
+}
+
+/* ===== ورود ===== */
+$('lbtn').onclick = doLogin;
+$('lp').addEventListener('keydown', e=>{ if(e.key==='Enter') doLogin(); });
+
+async function doLogin(){
+  const u = $('lu').value.trim(), p = $('lp').value;
+  const msg = $('lmsg'), btn = $('lbtn');
+  if(!u || !p){ msg.className='login-status error'; msg.textContent='نام کاربری و رمز را وارد کنید'; return; }
+  btn.disabled = true; msg.className='login-status'; msg.innerHTML='<span class="spin"></span> در حال بررسی...';
+  try{
+    // ورود در سرور: رمز فقط آن‌جا بررسی می‌شود و یک توکن برمی‌گردد
+    // نام و رمز در هدر (نه بدنه)؛ توکن در هدرِ پاسخ
+    const res = await fetch(API+'/api/auth/login', {method:'POST', headers:{Authorization:'Basic '+btoa(unescape(encodeURIComponent(u+':'+p)))}});
+    const r = await res.json().catch(()=>({}));
+    const tk = res.headers.get('X-Auth-Token');
+    if(!res.ok || !r.success || !tk){ msg.className='login-status error'; msg.textContent=r.error || 'نام کاربری یا رمز عبور اشتباه است'; btn.disabled=false; return; }
+    localStorage.setItem('warehouseMobileToken', tk);
+    await loadData();
+    const found = (D.users||[]).find(x=>x.username===r.user.username) || r.user;
+    user = found;
+    localStorage.setItem('warehouseMobileUser', JSON.stringify({username:found.username}));
+    api('/api/activity/login', {method:'POST', body:JSON.stringify({username:found.username})}).catch(()=>{});
+    startApp();
+  }catch(e){
+    msg.className='login-status error'; msg.textContent='اتصال به سرور برقرار نشد — ' + e.message; btn.disabled=false;
+  }
+}
+
+function logout(){
+  if(mToken()) fetch(API+'/api/auth/logout', {method:'POST', headers:{Authorization:'Bearer '+mToken()}}).catch(()=>{});
+  localStorage.removeItem('warehouseMobileToken');
+  localStorage.removeItem('warehouseMobileUser');
+  user = null; clearInterval(S._poll); NAV_STACK.length = 0;
+  $('app').classList.remove('on'); $('login').style.display='flex';
+  $('lp').value=''; $('lbtn').disabled=false; $('lmsg').textContent='';
+}
+
+async function loadData(){
+  const d = await api('/api/data');
+  D = Object.assign(D, d);
+  $('net').className = 'badge-net'; $('net').textContent = 'آنلاین';
+  return D;
+}
+
+function startApp(){
+  $('login').style.display='none'; $('app').classList.add('on');
+  S.dept = myDeptId() || 'raw';
+  S.screen = canAccessSection('sec-dashboard') ? 'dash' : (canAccessSection('sec-documents') ? 'docs' : 'more');
+  render();
+  clearInterval(S._poll);
+  S._poll = setInterval(pollVersion, 6000);
+  checkPushStatus();
+}
+
+async function pollVersion(){
+  try{
+    const v = await api('/api/data-version');
+    if(v.version !== dataVersion){ dataVersion = v.version; await loadData(); render(); }
+  }catch(e){
+    $('net').className='badge-net off'; $('net').textContent='آفلاین';
+  }
+}
+
+/* ===== ناوبری ===== */
+// تاریخچه‌ی صفحه‌ها: دکمه‌ی برگشت (و دکمه‌ی برگشتِ گوشی) به صفحه/مرحله‌ی قبلی می‌رود
+const NAV_STACK = [];
+function go(screen, noPush){
+  if(SCREEN_SECTION[screen] && !canAccessSection(SCREEN_SECTION[screen])){
+    toast('دسترسی به این بخش برای نقش شما بسته است', true);
+    return;
+  }
+  if(!noPush && S.screen && S.screen!==screen){ NAV_STACK.push(S.screen); if(NAV_STACK.length>40) NAV_STACK.shift(); }
+  S.screen = screen; S.item = null; S.materials = null; S.note = ''; S.postProd = false; S.pickQuery = ''; S.pickGroup = null; S.retDoc = null; S.dspSid = null; S.dspQty = null; if(screen!=='rework'){ S.rwLines=[]; S.rwPicking=false; }
+  if(screen==='output') S.target = nextDept();
+  window.scrollTo(0,0); render();
+}
+// مرحله‌های داخلِ یک صفحه (فهرستِ نسخه‌ها، سندِ انتخاب‌شده، …) اول بسته می‌شوند
+function subBack(dry){
+  const st = S.pickGroup ? ()=>{ S.pickGroup=null; }
+    : (S.screen==='return' && S.retDoc) ? ()=>{ S.retDoc=null; }
+    : (S.screen==='dispatch' && S.dspSid) ? ()=>{ S.dspSid=null; S.dspQty=null; }
+    : (S.screen==='rework' && S.rwPicking && (S.rwLines||[]).length) ? ()=>{ S.rwPicking=false; S.pickQuery=''; }
+    : null;
+  if(st && !dry) st();
+  return !!st;
+}
+function canGoBack(){ return !!user && (subBack(true) || NAV_STACK.length>0 || S.screen!=='dash'); }
+function back(){
+  if(subBack()){ window.scrollTo(0,0); render(); return; }
+  let prev = NAV_STACK.pop();
+  while(prev && prev===S.screen) prev = NAV_STACK.pop();
+  prev = prev || PARENT[S.screen] || (S.screen!=='dash' ? 'dash' : null);
+  if(prev) go(prev, true);
+}
+// دکمه‌ی برگشتِ گوشی/مرورگر: همیشه یک ورودیِ اضافه در history نگه می‌داریم تا برگشت داخلِ برنامه بماند
+try{ history.replaceState({wh:0},''); history.pushState({wh:1},''); }catch(e){}
+window.addEventListener('popstate', ()=>{
+  if(user && canGoBack()){ back(); try{ history.pushState({wh:1},''); }catch(e){} }
+});
+function nextDeptOf(deptId){
+  const i = STAGE_SEQUENCE.indexOf(deptId);
+  return (i>=0 && i<STAGE_SEQUENCE.length-1) ? STAGE_SEQUENCE[i+1] : 'finished';
+}
+function nextDept(){ return nextDeptOf(myDeptId()); }
+
+/* ===== رندر ===== */
+function render(){
+  if(!user) return;
+  const dept = privileged() ? S.dept : myDeptId();
+  $('title').textContent = (FORMS[S.screen] && FORMS[S.screen].title) || TITLES[S.screen] || '';
+  $('backBtn').style.display = canGoBack() ? 'block' : 'none';
+  $('backBtn').onclick = back;
+  $('deptPill').textContent = deptName(dept);
+  $('meta').textContent = user.fullname + ' · ' + roleLabel(user.role);
+  $('fy').textContent = D.activeFiscalYear || '—';
+
+  const pend = groupDocsM(pendingDocs()).length;
+  const navVisible = NAV.filter(n=>{
+    if(n.id==='dash') return canAccessSection('sec-dashboard');
+    if(n.id==='docs') return canAccessSection('sec-documents');
+    if(n.id==='new') return ['production','consume','output','waste','adjust'].some(s=>canAccessSection(SCREEN_SECTION[s]));
+    if(n.id==='reports') return ['cardex','daily','history'].some(s=>canAccessSection(SCREEN_SECTION[s]));
+    return true; // 'more' - همیشه در دسترسه (حساب کاربری/تنظیمات، معادلِ sectionِ خاصی توی وب نیست)
+  });
+  $('nav').innerHTML = navVisible.map(n=>{
+    const active = S.screen===n.id || PARENT[S.screen]===n.id;
+    return '<button class="'+(active?'active':'')+'" onclick="go(\''+n.id+'\')">'+
+      '<span class="bar"></span><span>'+n.label+'</span>'+
+      (n.id==='docs'&&pend?'<span class="nbadge">'+fmt(pend)+'</span>':'')+'</button>';
+  }).join('');
+
+  const v = $('view');
+  if(S.screen==='dash') v.innerHTML = viewDash(dept);
+  else if(S.screen==='docs') v.innerHTML = viewDocs();
+  else if(S.screen==='new') v.innerHTML = viewNew();
+  else if(S.screen==='production') v.innerHTML = viewProduction(dept);
+  else if(FORMS[S.screen]) v.innerHTML = viewForm(dept);
+  else if(S.screen==='return') v.innerHTML = viewReturn(dept);
+  else if(S.screen==='dispatch') v.innerHTML = viewDispatch();
+  else if(S.screen==='rework') v.innerHTML = viewRework();
+  else if(S.screen==='reports') v.innerHTML = viewReports();
+  else if(S.screen==='cardex') v.innerHTML = viewCardex(dept);
+  else if(S.screen==='daily') v.innerHTML = viewDaily(dept);
+  else if(S.screen==='history') v.innerHTML = viewHistory(dept);
+  else if(S.screen==='more') v.innerHTML = viewMore();
+}
+function roleLabel(r){ return ({admin:'مدیر', supervisor:'سرپرست', warehouse:'انباردار', user:'اپراتور', viewer:'مشاهده‌گر'})[r] || r; }
+function isViewerM(){ return !!user && user.role==='viewer'; }
+
+/* --- موجودی --- */
+function viewDash(dept){
+  const inv = (D.inventory||{})[dept] || {};
+  const q = S.query.trim();
+  const rows = Object.entries(inv).filter(([c,v])=>v!==0)
+    .filter(([c,v])=>!q || c.includes(q) || itemName(c).includes(q));
+  const pend = groupDocsM(pendingDocs()).length;
+  const today = (D.transactions||[]).filter(t=>t.unit===dept && t.type==='production' && normFa(t.date)===todayFa())
+    .reduce((s,t)=>s+(t.qty||0),0);
+
+  return '<div class="stack">'+
+    '<div class="stats">'+
+      '<div class="card"><div class="k">اقلام موجود</div><div class="v">'+fmt(rows.length)+'</div></div>'+
+      '<div class="card"><div class="k">در انتظار تایید</div><div class="v" style="color:var(--warn)">'+fmt(pend)+'</div></div>'+
+      '<div class="card"><div class="k">تولید امروز</div><div class="v" style="color:var(--green)">'+fmt(today)+'</div></div>'+
+    '</div>'+
+    (privileged() ? '<div class="chips">'+DEPTS.map(d=>'<button class="chip'+(d.id===dept?' on':'')+'" onclick="pickDept(\''+d.id+'\')">'+d.name+'</button>').join('')+'</div>' : '')+
+    '<div class="card search"><span class="muted">جستجو</span><input value="'+esc(S.query)+'" placeholder="کد یا نام کالا..." oninput="S.query=this.value;renderList()"></div>'+
+    '<div class="stack" id="invList">'+invRows(rows)+'</div>'+
+  '</div>';
+}
+function invRows(rows){
+  if(!rows.length) return '<div class="empty">کالایی با این جستجو در این بخش نیست</div>';
+  return rows.map(([c,v])=>'<div class="card row-item">'+
+    '<div class="grow"><div class="code">'+esc(baseKey(c))+'</div><div class="iname">'+itemNameHtmlM(c)+'</div></div>'+
+    '<div><div class="qty" style="color:'+(v<=0?'var(--danger)':'var(--ink)')+'">'+fmt(v)+'</div><div class="unit">'+esc(itemUnit(c))+'</div></div>'+
+  '</div>').join('');
+}
+function renderList(){
+  const dept = privileged()?S.dept:myDeptId();
+  const inv = (D.inventory||{})[dept]||{};
+  const q = S.query.trim();
+  const rows = Object.entries(inv).filter(([c,v])=>v!==0).filter(([c,v])=>!q||c.includes(q)||itemName(c).includes(q));
+  $('invList').innerHTML = invRows(rows);
+}
+function pickDept(id){ S.dept = id; S.query=''; render(); }
+
+/* --- اسناد --- */
+function myDocs(){
+  const dept = myDeptId();
+  const list = (D.docs||[]).filter(d=>!D.activeFiscalYear || !d.fiscalYear || d.fiscalYear===D.activeFiscalYear);
+  if(privileged()) return list;
+  return list.filter(d=>d.unit===dept || d.fromUnit===dept || d.toUnit===dept);
+}
+function pendingDocs(){ return myDocs().filter(d=>(AWAITING.includes(d.status) && canAct(d)) || canRepairM(d) || (d.type==='dispatch' && canShipDispatchM() && (d.status==='pending_dispatch' || (d.status==='approved' && d.waybillPending)))); }
+function canAct(d){
+  const dept = myDeptId(), role = user.role;
+  if(d.type==='output' && d.status==='pending_warehouse') return role==='warehouse' || role==='admin';
+  if(d.type==='production' && d.status==='pending_production') return role==='warehouse' || role==='admin';
+  if(d.type==='output' && d.status==='pending') return d.toUnit===dept || role==='admin';
+  if(d.type==='return' && d.status==='return_pending') return d.toUnit===dept || role==='admin';
+  if(['waste','shortage','excess'].includes(d.type) && d.status==='pending_approval') return role==='admin' || (((D.appSettings&&D.appSettings.rolePermissions)||{})[role]||[]).includes('perm-approve-adjustments');
+  return false;
+}
+// سندِ چندردیفی: مصرف/ضایعاتِ یک تولید داخلِ همان کارتِ تولیدند؛ خروج‌های یک ارسال (submissionId) یک کارت‌اند
+function returnedQtyM(id){ let s=0; (D.docs||[]).forEach(r=>{ if((r.returnOfDocId===id && ['pending','pending_warehouse','approved'].includes(r.status)) || (r.type==='return' && r.parentDocId===id && (r.status==='return_pending'||r.status==='return_approved'))) s+=Number(r.qty)||0; }); return Math.round(s*1e6)/1e6; }
+function hasReturnM(id){ const d=(D.docs||[]).find(x=>x.id===id); return !d || returnedQtyM(id) >= (Number(d.qty)||0) - 1e-9; }
+// ===== بازگشت به بخش قبلی (فرم): حواله‌های تاییدشده‌ای که این بخش گرفته و هنوز (کامل) برنگشته‌اند =====
+function returnableDocsM(dept){
+  return (D.docs||[]).filter(d=>d.type==='output' && d.status==='approved' && d.toUnit===dept && !hasReturnM(d.id))
+    .sort((a,b)=>b.id-a.id);
+}
+function pickReturnDoc(id){ const d=(D.docs||[]).find(x=>x.id===id); S.retDoc=id; S.qty = d ? Math.round((d.qty-returnedQtyM(id))*1e6)/1e6 : 1; render(); }
+function viewReturn(dept){
+  const list = returnableDocsM(dept);
+  const q=(S.pickQuery||'').trim().toLowerCase().split(/\s+/).filter(Boolean);
+  const hay=d=>((d.docNo||'')+' '+d.id+' '+d.item+' '+itemName(d.item)+' '+deptName(d.fromUnit)+' '+(d.date||'')).toLowerCase();
+  const sel = S.retDoc ? (D.docs||[]).find(x=>x.id===S.retDoc) : null;
+  if(sel){
+    const rem = Math.round((sel.qty-returnedQtyM(sel.id))*1e6)/1e6;
+    return '<div class="stack">'+
+      '<button class="chip" onclick="S.retDoc=null;render()">→ انتخاب سند دیگر</button>'+
+      '<div class="card"><div class="lbl">سند '+esc(sel.docNo||('#'+sel.id))+' — '+esc(sel.date||'')+'</div>'+
+        '<div class="iname" style="margin:4px 0">'+itemNameHtmlM(sel.item,true)+'</div>'+
+        '<div style="font-size:12.5px">برگشت از <b>'+esc(deptName(dept))+'</b> به <b>'+esc(deptName(sel.fromUnit))+'</b></div>'+
+        '<div style="font-size:12px;color:var(--sub);margin-top:4px">دریافتی '+fmt(sel.qty)+' · قبلاً برگشت '+fmt(sel.qty-rem)+' · <b>قابلِ برگشت '+fmt(rem)+'</b> '+esc(itemUnit(sel.item))+'</div></div>'+
+      stepper()+dateCard()+
+      '<div class="card"><div class="lbl">دلیل / توضیح (اجباری)</div><input class="note-input" value="'+esc(S.note)+'" placeholder="مثلاً معیوب، اضافه ارسال شده..." oninput="S.note=this.value"></div>'+
+      '<button class="submit" style="background:#0F766E" onclick="submitReturn()">ثبت سند برگشتی</button></div>';
+  }
+  const shown = list.filter(d=>q.every(w=>hay(d).includes(w))).slice(0,150);
+  return '<div class="stack"><div class="card"><div class="lbl">حواله‌ای را که می‌خواهید (کل یا بخشی از آن) برگردانید انتخاب کنید</div>'+
+    '<input class="pick-search" placeholder="جستجو: شماره سند، کالا، بخش…" value="'+esc(S.pickQuery||'')+'" oninput="S.pickQuery=this.value;render();var e=document.querySelector(\'.pick-search\');if(e){e.focus();e.setSelectionRange(e.value.length,e.value.length);}">'+
+    (shown.length ? shown.map(d=>{ const rem=Math.round((d.qty-returnedQtyM(d.id))*1e6)/1e6;
+      return '<button class="opt" onclick="pickReturnDoc('+d.id+')"><span class="code">'+esc(d.docNo||('#'+d.id))+' · '+esc(d.date||'')+' · از '+esc(deptName(d.fromUnit))+'</span><span class="iname">'+itemNameHtmlM(d.item)+'</span><span class="unit" style="text-align:right">قابلِ برگشت: '+fmt(rem)+(rem<d.qty?' از '+fmt(d.qty):'')+' '+esc(itemUnit(d.item))+'</span></button>'; }).join('')
+      : '<div class="empty">'+(list.length?'موردی با این جستجو نیست':'حواله‌ی دریافتیِ قابلِ برگشتی در این بخش نیست')+'</div>')+
+  '</div></div>';
+}
+async function submitReturn(){
+  if(S.busy || !S.retDoc) return;
+  const qty=parseFloat(S.qty)||0;
+  if(qty<=0) return toast('مقدار را وارد کنید', true);
+  if((S.note||'').trim().length<3) return toast('دلیل بازگشت را بنویسید', true);
+  S.busy=true;
+  try{
+    const r = await api('/api/doc/output/request-return',{method:'POST',body:JSON.stringify({docId:S.retDoc, qty, note:S.note, date:docDateStr(), actorUsername:user.username})});
+    resetDocDate(); S.retDoc=null; await loadData(); S.docFilter='all'; go('docs');
+    toast('سند برگشتی '+((r.doc&&r.doc.docNo)||'')+' ثبت شد - منتظر تایید بخش قبلی');
+  }catch(e){ toast(e.message, true); }
+  finally{ S.busy=false; }
+}
+/* --- برگشتِ معیوب (دوباره‌کاری): تزریق ← لحیم --- */
+const RW_REASONS_DEF = ['جدا شدن کابل از سوکت','سوکت خراب','قطعی کابل','سایر'];
+const RW_ICONS = {'جدا شدن کابل از سوکت':'🔗','قطعی کابل':'🔌','سوکت خراب':'⚡','لحیم بد':'🔥','سایر':'❓'};
+const RW_MODES = [['none','♻️ همان سوکت قبلی','قطعه‌ی نو مصرف نشد'],['formula','🆕 سوکت نو، همان نوع','سرهای عوض‌شده را علامت بزنید'],['convert','🔁 سوکت نوعِ دیگر','کابل عوض می‌شود؛ کابلِ جدید را انتخاب کنید']];
+const RW_ST = {in_transit:['در راه به لحیم','#854F0B','#FAEEDA'], at_repair:['در حال تعمیر','#3C3489','#EEEDFE'], done:['انجام شد','#16a34a','#dcfce7'], return_rejected:['برگشت رد/حذف شد','#791F1F','#FCEBEB'], cancelled:['لغو شده','#791F1F','#FCEBEB']};
+function rwReasonsM(){ const r=D.appSettings&&D.appSettings.reworkReasons; return Array.isArray(r)&&r.length?r:RW_REASONS_DEF; }
+function rwRetQty(rw){ return Math.round((rw.returnLines||[]).reduce((a,l)=>a+l.qty,0)*1e6)/1e6; }
+function rwDoneQty(rw){ return Math.round((rw.repairs||[]).reduce((a,r)=>a+(r.qty||0)+(r.scrapQty||0),0)*1e6)/1e6; }
+function rwStateM(rw){
+  if(rw.status==='cancelled') return 'cancelled';
+  const ds=(rw.returnLines||[]).map(l=>(D.docs||[]).find(d=>d.id===l.docId));
+  if(ds.some(d=>!d||['rejected','cancelled'].includes(d.status))) return 'return_rejected';
+  if(ds.some(d=>d.status!=='approved')) return 'in_transit';
+  return rwRetQty(rw)-rwDoneQty(rw)>0.001 ? 'at_repair' : 'done';
+}
+function canRepairM(rw){ return rw.type==='rework' && ((rwStateM(rw)==='at_repair' && (user.role==='admin' || rw.toUnit===myDeptId())) || (canSetDueM() && rwOverdueM(rw))); }
+function rwChip(rw){ const s=RW_ST[rwStateM(rw)]||['','','']; return '<span class="doc-status" style="background:'+s[2]+';color:'+s[1]+'">'+s[0]+'</span>'; }
+function usableM(dept, code){
+  const have=((D.inventory||{})[dept]||{})[code]||0;
+  const pend=(D.docs||[]).filter(d=>d.type==='output'&&d.fromUnit===dept&&d.item===code&&(d.status==='pending'||d.status==='pending_warehouse')).reduce((a,d)=>a+(Number(d.qty)||0),0);
+  return Math.round((have-pend)*1e6)/1e6;
+}
+function viewRework(){
+  let dept = privileged() ? S.dept : myDeptId();
+  const chips = privileged() ? '<div class="chips">'+['inject','solder'].map(id=>'<button class="chip'+(id===dept?' on':'')+'" onclick="S.dept=\''+id+'\';render()">'+deptName(id)+'</button>').join('')+'</div>' : '';
+  if(dept==='inject') return '<div class="stack">'+chips+viewReworkCreate(dept)+'</div>';
+  if(dept==='solder') return '<div class="stack">'+chips+viewReworkRepair(dept)+'</div>';
+  return '<div class="stack">'+chips+'<div class="empty">برگشتِ معیوب فعلاً از تزریق به لحیم است</div></div>';
+}
+function rwOverdueM(rw){ const st=rwStateM(rw); return !!rw.dueAt && (st==='in_transit'||st==='at_repair') && Date.parse(rw.dueAt)<Date.now(); }
+function canSetDueM(){ return user && (user.role==='admin'||user.role==='warehouse'); }
+function rwDueM(rw){
+  if(!rw.dueAt) return '';
+  const st=rwStateM(rw), d=new Date(rw.dueAt).toLocaleDateString('fa-IR'), left=Math.ceil((Date.parse(rw.dueAt)-Date.now())/86400000);
+  if(st==='done'||st==='cancelled') return '';
+  return rwOverdueM(rw) ? '<div class="doc-note" style="color:var(--danger);font-weight:700">⏰ دیرکرد '+fmt(Math.max(1,-left))+' روز (مهلت تا '+d+')</div>' : '<div class="doc-note">⏳ مهلتِ برگشت تا '+d+' ('+fmt(left)+' روز)</div>';
+}
+async function setReworkDueM(id){
+  const rw=(D.docs||[]).find(d=>d.id===id); const v=prompt('مهلتِ برگشتِ تعمیرشده از لحیم (چند روز از الان؟)', String((rw&&rw.dueDays)||3)); if(v===null) return;
+  act(()=>api('/api/rework/'+id+'/due',{method:'POST',body:JSON.stringify({days:Number(normFa(v))})}), 'مهلت ثبت شد');
+}
+function askReworkDueM(ids){
+  const isRw=ids.map(i=>(D.docs||[]).find(d=>d.id===i)).some(d=>d&&d.reworkId&&!d.reworkRepair);
+  if(!isRw) return undefined;
+  const v=prompt('🔧 برگشتِ معیوب به لحیم\nمهلتِ برگشتِ تعمیرشده از لحیم چند روز باشد؟\n(اگر انجام نشود به انباردار و مدیر هشدار می‌رود)','3');
+  if(v===null) return null;
+  const n=Number(normFa(v)); if(!(n>=1&&n<=60)){ toast('مهلت باید ۱ تا ۶۰ روز باشد', true); return null; }
+  return n;
+}
+function rwListCard(rw, actionsHtml){
+  const l=(rw.returnLines||[])[0];
+  const st0=rwStateM(rw);
+  if(canSetDueM() && (st0==='in_transit'||st0==='at_repair')) actionsHtml=(actionsHtml||'')+'<div class="doc-actions"><button class="mid-btn" onclick="setReworkDueM('+rw.id+')">⏰ مهلت</button></div>';
+  return '<div class="card"><div class="doc-top"><span class="doc-no">'+esc(rw.docNo||('#'+rw.id))+'</span>'+rwChip(rw)+'</div>'+
+    '<div style="font-weight:700;margin:4px 0">'+esc((RW_ICONS[rw.reason]||'🔧')+' '+rw.reason)+'</div>'+
+    '<div class="doc-item"><span>'+itemNameHtmlM(l?l.item:rw.item)+'</span><b>'+fmt(l?l.qty:rw.qty)+'</b></div>'+
+    ((rw.repairs||[]).length?'<div class="doc-note">تعمیر شد: '+fmt((rw.repairs||[]).reduce((a,r)=>a+r.qty,0))+((rw.repairs||[]).some(r=>r.scrapQty)?' · ضایعات: '+fmt((rw.repairs||[]).reduce((a,r)=>a+(r.scrapQty||0),0)):'')+'</div>':'')+
+    rwDueM(rw)+
+    '<div class="doc-meta"><span>'+esc(rw.createdBy||'')+'</span><span style="direction:ltr">'+esc(rw.date||'')+'</span></div>'+
+    (rw.note?'<div class="doc-note">'+esc(rw.note)+'</div>':'')+(actionsHtml||'')+'</div>';
+}
+function viewReworkCreate(dept){
+  const inv=(D.inventory||{})[dept]||{};
+  if(!S.rwLines) S.rwLines=[];
+  const mine=(D.docs||[]).filter(d=>d.type==='rework'&&d.unit===dept).sort((a,b)=>b.id-a.id).slice(0,8);
+  const recent = mine.length ? '<div class="lbl" style="margin-top:6px">آخرین برگشت‌ها</div>'+mine.map(rw=>{ const st=rwStateM(rw);
+    return rwListCard(rw, (st==='in_transit'||st==='return_rejected') ? '<div class="doc-actions"><button class="no-btn" onclick="cancelReworkM('+rw.id+')">↩️ لغو</button></div>' : ''); }).join('') : '';
+  if(S.rwPicking || !S.rwLines.length){
+    const used=new Set(S.rwLines.map(l=>l.item));
+    const q=(S.pickQuery||'').trim().toLowerCase().split(/\s+/).filter(Boolean);
+    const list=Object.keys(inv).filter(c=>/^(SOL|INJ)-/.test(c) && usableM(dept,c)>0)
+      .filter(c=>q.every(w=>(c+' '+itemName(c)).toLowerCase().includes(w)))
+      .sort((a,b)=>(a.startsWith('INJ')?0:1)-(b.startsWith('INJ')?0:1) || itemName(a).localeCompare(itemName(b),'fa')).slice(0,150);
+    return (S.rwLines.length?'<button class="chip" onclick="S.rwPicking=false;render()">→ برگشت به فرم ('+fmt(S.rwLines.length)+' ردیف)</button>':'')+
+      '<div class="card"><div class="lbl">کالای معیوب را انتخاب کنید</div>'+
+      '<input class="pick-search" placeholder="جستجو: نام یا کد کالا…" value="'+esc(S.pickQuery||'')+'" oninput="S.pickQuery=this.value;render();var e=document.querySelector(\'.pick-search\');if(e){e.focus();e.setSelectionRange(e.value.length,e.value.length);}">'+
+      (list.length ? list.map(c=>'<button class="opt" onclick="pickReworkItem(\''+esc(c)+'\')"><span class="code">'+(c.startsWith('INJ')?'تزریق‌شده':'لحیم‌شده')+'</span><span class="iname">'+itemNameHtmlM(c)+'</span><span class="unit" style="text-align:right">موجودی: '+fmt(usableM(dept,c))+(used.has(c)?' · در فرم هست؛ با عیبِ دیگر اضافه می‌شود':'')+'</span></button>').join('') : '<div class="empty">کالایی پیدا نشد</div>')+
+      '</div>'+(S.rwLines.length?'':recent);
+  }
+  const reasons=rwReasonsM();
+  return S.rwLines.map((l,i)=>'<div class="card"><div class="doc-top"><span class="lbl">ردیف '+fmt(i+1)+' · '+(l.item.startsWith('INJ')?'تزریق‌شده':'لحیم‌شده')+'</span><button class="chip" onclick="S.rwLines.splice('+i+',1);render()">✕ حذف</button></div>'+
+      '<div class="iname">'+itemNameHtmlM(l.item,true)+'</div><div class="unit">موجودی: '+fmt(usableM(dept,l.item))+'</div>'+
+      '<div class="stepper" style="margin-top:6px"><button class="minus" onclick="rwLineQty('+i+',-1)">&#8722;</button><input type="number" inputmode="decimal" value="'+l.qty+'" oninput="S.rwLines['+i+'].qty=parseFloat(this.value)||0"><button class="plus" onclick="rwLineQty('+i+',1)">+</button></div>'+
+      '<div class="chips" style="flex-wrap:wrap;margin-top:6px">'+reasons.map(r=>'<button class="chip'+(l.reason===r?' on':'')+'" style="padding:9px 12px;font-size:13px" onclick="S.rwLines['+i+'].reason=\''+esc(r).replace(/'/g,"\\'")+'\';render()">'+(RW_ICONS[r]||'🔧')+' '+esc(r)+'</button>').join('')+'</div></div>').join('')+
+    '<button class="chip" style="padding:12px;font-size:14px;width:100%" onclick="S.rwPicking=true;S.pickQuery=\'\';render()">➕ کابلِ دیگر</button>'+
+    '<div class="card"><div class="lbl">توضیح (اختیاری)</div><input class="note-input" value="'+esc(S.note)+'" oninput="S.note=this.value"></div>'+
+    '<div class="doc-note">کالای تزریق‌شده خودکار به کابلِ لحیم‌شده برمی‌گردد. همه‌ی ردیف‌ها با یک سند به لحیم می‌روند.</div>'+
+    '<button class="submit" style="background:#B45309" onclick="submitReworkM()">🔧 ارسال به لحیم ('+fmt(S.rwLines.length)+' ردیف)</button>'+recent;
+}
+function rwLineQty(i,d){ const l=S.rwLines[i]; l.qty=Math.max(1,(parseFloat(l.qty)||0)+d); render(); }
+function pickReworkItem(c){ if(!S.rwLines) S.rwLines=[]; const last=S.rwLines[S.rwLines.length-1]; S.rwLines.push({item:c, qty:1, reason:last?last.reason:null}); S.rwPicking=false; S.pickQuery=''; render(); }
+function refreshReworkPlan(){}
+async function submitReworkM(){
+  if(S.busy) return;
+  const dept=privileged()?S.dept:myDeptId(), lines=S.rwLines||[];
+  if(!lines.length) return toast('کالا را انتخاب کنید', true);
+  for(const [i,l] of lines.entries()){
+    if(!(l.qty>0)) return toast('ردیف '+(i+1)+': تعداد را وارد کنید', true);
+    if(!l.reason) return toast('ردیف '+(i+1)+': علت خرابی را انتخاب کنید', true);
+  }
+  S.busy=true;
+  try{
+    const r=await api('/api/rework',{method:'POST',body:JSON.stringify({unit:dept,lines,note:S.note,actorUsername:user.username})});
+    S.rwLines=[]; S.note=''; await loadData(); render(); toast(r.message||'ثبت شد');
+  }catch(e){ toast(e.message, true); }
+  finally{ S.busy=false; }
+}
+const cancelReworkM = id => withReason('لغوِ برگشتِ معیوب', r => act(()=>api('/api/rework/'+id+'/cancel',{method:'POST',body:JSON.stringify({reason:r})}), 'لغو شد و موجودی برگشت'));
+function viewReworkRepair(dept){
+  const all=(D.docs||[]).filter(d=>d.type==='rework'&&d.status!=='cancelled'&&(user.role==='admin'||d.toUnit===dept||privileged()));
+  const ord={at_repair:0,in_transit:1,return_rejected:2,done:3};
+  const list=all.sort((a,b)=>(ord[rwStateM(a)]-ord[rwStateM(b)])||b.id-a.id).filter((rw,i)=>rwStateM(rw)!=='done'||i<40).slice(0,40);
+  if(!list.length) return '<div class="empty">کالای معیوبی از تزریق برنگشته</div>';
+  if(!S.rwQty) S.rwQty={};
+  return list.map(rw=>{
+    const st=rwStateM(rw), rem=Math.round((rwRetQty(rw)-rwDoneQty(rw))*1e6)/1e6, od=(D.docs||[]).find(d=>d.id===(rw.returnLines[0]||{}).docId);
+    let act='';
+    if(st==='in_transit' && od){
+      if(od.status==='pending_warehouse') act='<div class="doc-note">⏳ منتظر تایید انباردار</div>';
+      else if(od.status==='pending' && (user.role==='admin'||od.toUnit===myDeptId())) act='<div class="doc-actions"><button class="ok-btn" onclick="approveOutput('+od.id+')">✅ تحویل گرفتم</button></div>';
+    }
+    if(st==='at_repair' && canRepairM(rw)){
+      if(S.rwQty[rw.id]==null) S.rwQty[rw.id]=rem;
+      if(!S.rwMode) S.rwMode={}; if(!S.rwChk) S.rwChk={}; if(!S.rwNew) S.rwNew={}; if(!S.rwAlt) S.rwAlt={};
+      if(!S.rwMode[rw.id]) S.rwMode[rw.id] = rw.kind==='direct' ? 'none' : 'formula';
+      const mode=S.rwMode[rw.id];
+      let per = mode==='formula' ? (rw.repairPerUnit||[]) : [];
+      let altHtml='';
+      if(mode==='convert'){
+        const L=S.rwAlt[rw.id];
+        if(!L){ loadReworkAltM(rw.id); altHtml='<div class="doc-note">⏳ در حال خواندنِ کابل‌ها…</div>'; }
+        else {
+          const sel=L.find(a=>a.item===S.rwNew[rw.id]); per = sel ? sel.perUnit : [];
+          const opt=a=>'<option value="'+esc(a.item)+'"'+(a.item===S.rwNew[rw.id]?' selected':'')+'>'+esc(a.name)+'</option>';
+          const same=L.filter(a=>a.sameCable), other=L.filter(a=>!a.sameCable);
+          altHtml='<div class="lbl" style="margin-top:8px">کابلِ جدید (بعد از سوکتِ نوعِ دیگر)</div><select onchange="pickReworkAltM('+rw.id+',this.value)" style="width:100%;padding:9px;border:1px solid var(--line);border-radius:8px"><option value="">— انتخاب کنید —</option>'+
+            (same.length?'<optgroup label="همان کابل، سوکتِ دیگر">'+same.map(opt).join('')+'</optgroup>':'')+(other.length?'<optgroup label="سایر محصولاتِ لحیم">'+other.map(opt).join('')+'</optgroup>':'')+'</select>';
+        }
+      }
+      if(!S.rwChk[rw.id]) S.rwChk[rw.id]={};
+      const chk=S.rwChk[rw.id];
+      act='<div class="lbl" style="margin-top:6px">تعداد تعمیرشده (از '+fmt(rem)+')</div>'+
+        '<input type="number" inputmode="decimal" value="'+S.rwQty[rw.id]+'" oninput="S.rwQty['+rw.id+']=parseFloat(this.value)||0" style="width:100%;padding:10px;border:1px solid var(--line);border-radius:10px;font-size:16px">'+
+        '<div class="lbl" style="margin-top:8px">سوکت</div><div class="stack" style="gap:6px">'+RW_MODES.map(x=>'<button class="chip'+(mode===x[0]?' on':'')+'" style="text-align:right;padding:10px 12px" onclick="S.rwMode['+rw.id+']=\''+x[0]+'\';S.rwChk['+rw.id+']=null;render()"><b>'+x[1]+'</b> <span style="font-size:11px;opacity:.8">'+x[2]+'</span></button>').join('')+'</div>'+
+        altHtml+
+        (per.length?'<div class="lbl" style="margin-top:8px">کدام سرها عوض شد؟ (ضایعات/مصرف همین‌ها ثبت می‌شود)</div>'+per.map(m=>{ if(chk[m.item]===undefined) chk[m.item]=true;
+          return '<label style="display:flex;gap:8px;align-items:center;padding:8px;border:1px solid var(--line);border-radius:8px;margin-top:4px;font-size:13px"><input type="checkbox" style="width:20px;height:20px"'+(chk[m.item]?' checked':'')+' onchange="S.rwChk['+rw.id+'][\''+esc(m.item)+'\']=this.checked"> '+esc(itemName(m.item))+' <span style="color:var(--sub);font-size:11px">×'+fmt(m.qty)+' برای هر عدد</span></label>'; }).join(''):'')+
+        '<button class="submit" style="background:#185FA5;margin-top:8px" onclick="submitRepairM('+rw.id+')">📤 تعمیر شد، ارسال به تزریق</button>';
+    }
+    return rwListCard(rw, act);
+  }).join('');
+}
+async function submitRepairM(id){
+  if(S.busy) return;
+  const rw=(D.docs||[]).find(d=>d.id===id); if(!rw) return;
+  const rem=Math.round((rwRetQty(rw)-rwDoneQty(rw))*1e6)/1e6;
+  const qty=Number(S.rwQty&&S.rwQty[id])||0;
+  if(qty<0||qty>rem+1e-9) return toast('حداکثر '+fmt(rem)+' عدد', true);
+  let scrapQty=0;
+  if(qty<rem-1e-9){
+    const ok=await confirmModal(fmt(rem-qty)+' عدد باقی‌مانده قابل تعمیر نیست و ضایعات شود؟\n\n(«انصراف» یعنی بعداً تعمیر می‌شود)', {title:'باقی‌مانده', confirmLabel:'بله، ضایعات شود', cancelLabel:'انصراف'});
+    if(ok) scrapQty=Math.round((rem-qty)*1e6)/1e6;
+  }
+  if(qty<=0 && scrapQty<=0) return;
+  S.busy=true;
+  const mode=(S.rwMode&&S.rwMode[id])||'formula', chk=(S.rwChk&&S.rwChk[id])||{};
+  const newItem = mode==='convert' ? ((S.rwNew||{})[id]||'') : undefined;
+  if(mode==='convert' && !newItem){ S.busy=false; return toast('کابلِ جدید را انتخاب کنید', true); }
+  const materials = mode==='none' ? undefined : Object.keys(chk).filter(k=>chk[k]);
+  try{ const r=await api('/api/rework/'+id+'/repair',{method:'POST',body:JSON.stringify({qty,scrapQty,mode,newItem,materials,actorUsername:user.username})}); delete S.rwQty[id]; ['rwMode','rwChk','rwNew'].forEach(k=>{ if(S[k]) delete S[k][id]; }); await loadData(); render(); toast(r.message||'ثبت شد'); }
+  catch(e){ toast(e.message, true); }
+  finally{ S.busy=false; }
+}
+async function loadReworkAltM(id){
+  if(S._rwAltLoading) return; S._rwAltLoading=true;
+  try{ const r=await api('/api/rework/'+id+'/alternatives'); S.rwAlt[id]=r.list||[]; }catch(e){ S.rwAlt[id]=[]; toast(e.message,true); }
+  finally{ S._rwAltLoading=false; if(S.screen==='rework') render(); }
+}
+function pickReworkAltM(id, item){ S.rwNew[id]=item; S.rwChk[id]={}; render(); }
+function groupDocsM(list){
+  const all = D.docs||[], byId = new Map(all.map(x=>[x.id,x])), seen = new Set(), out = [], groups = new Set();
+  list.forEach(d=>{
+    if((d.type==='consume'||d.type==='waste') && d.parentDocId){ const p = byId.get(d.parentDocId); if(p && (p.type==='production'||p.type==='rework')) d = p; }
+    if(d.type==='output' && d.submissionId){
+      const key = d.submissionId+'|'+d.status; if(groups.has(key)) return;
+      const lines = all.filter(x=>x.type==='output' && x.submissionId===d.submissionId && x.status===d.status).sort((a,b)=>a.id-b.id);
+      if(lines.length>1){ groups.add(key); out.push(Object.assign({}, lines[0], {isOutputGroup:true, lines})); return; }
+    }
+    if(seen.has(d.id)) return; seen.add(d.id); out.push(d);
+  });
+  return out;
+}
+function viewDocs(){
+  const list = groupDocsM(myDocs().filter(d=>S.docFilter==='all' ? true : (AWAITING.includes(d.status) || canRepairM(d)))
+    .slice().sort((a,b)=>(b.id||0)-(a.id||0)));
+  return '<div class="stack">'+
+    '<div class="chips">'+
+      '<button class="chip'+(S.docFilter==='awaiting'?' on':'')+'" onclick="S.docFilter=\'awaiting\';render()">در انتظار تایید</button>'+
+      '<button class="chip'+(S.docFilter==='all'?' on':'')+'" onclick="S.docFilter=\'all\';render()">همه اسناد</button>'+
+    '</div>'+
+    (list.length ? list.map(docCard).join('') : '<div class="empty">سندی با این فیلتر نیست</div>')+
+  '</div>';
+}
+function docCard(d){
+  const st = d.status;
+  const dept = myDeptId(), priv = privileged();
+  const isSender = !!user.username && d.createdBy === user.username;
+  const isReceiver = d.toUnit === dept;
+  const isDocUnit = d.unit === dept;
+  const from = d.type==='output'||d.type==='return' ? deptName(d.fromUnit) :
+    (d.type==='production'||d.type==='excess'||d.type==='receipt'||d.type==='initial' ? (TYPE_LABELS[d.type]==='تولید'?'سیستم':(d.type==='receipt' ? 'سپیدار' : (TYPE_LABELS[d.type]||''))) : deptName(d.unit));
+  const to = d.type==='output'||d.type==='return' ? deptName(d.toUnit) :
+    (['consume','waste','shortage'].includes(d.type) ? TYPE_LABELS[d.type] : deptName(d.unit));
+
+  if(d.type==='rework') return rwListCard(d, canRepairM(d) ? '<div class="doc-actions"><button class="ok-btn" onclick="S.dept=\'solder\';go(\'rework\')">🔧 تعمیر و ارسال</button></div>' : '');
+  let primary = '';
+  if(d.isOutputGroup){
+    const ids = d.lines.map(x=>x.id).join(',');
+    if(canAct(d)){
+      if(st==='pending_warehouse') primary = btns("batchM('output-warehouse-approve','"+ids+"')","batchM('output-warehouse-reject','"+ids+"')",'تایید انباردار (همه)');
+      else if(st==='pending') primary = btns("batchM('output-approve','"+ids+"')","batchM('output-reject','"+ids+"')",'تایید دریافت (همه)');
+    }
+  } else
+  if(canAct(d)){
+    if(d.type==='output' && st==='pending_warehouse')
+      primary = btns('warehouseApprove('+d.id+')','warehouseReject('+d.id+')','تایید انباردار');
+    else if(d.type==='output' && st==='pending')
+      primary = btns('approveOutput('+d.id+')','rejectOutputM('+d.id+')', d.reworkId && !d.reworkRepair ? '✅ تحویل گرفتم (معیوب)' : 'تایید دریافت');
+    else if(d.type==='return' && st==='return_pending')
+      primary = btns('approveReturn('+d.id+')','rejectReturn('+d.id+')','تایید برگشت');
+    else if(d.type==='production' && st==='pending_production')
+      primary = btns('approveProduction('+d.id+')','rejectProduction('+d.id+')','تایید انباردار (تولید)');
+    else primary = btns('approveAdjust('+d.id+')','rejectAdjust('+d.id+')','تایید');
+  }
+
+  // دکمه‌های ثانویه: حذفِ سندِ در انتظار (پیش از این‌که طرف مقابل تصمیم بگیره)، لغوِ سندِ
+  // تایید/اجرا‌شده (که موجودی رو برمی‌گردونه)، یا شروعِ برگشتِ یک خروجِ تایید‌شده - دقیقاً
+  // هم‌منطقِ دکمه‌های 🗑️/↩️ در renderDocuments() نسخه‌ی وب.
+  let extra = [];
+  // صادرکننده فقط تا قبل از اولین تایید: ویرایش / حذف
+  if(!d.isOutputGroup && canModifyM(d) && ['production','output','waste','shortage','excess'].includes(d.type)){
+    extra.push(['mid-btn', 'editDocM('+d.id+')', '✏️ ویرایش']);
+    extra.push(['no-btn', 'deleteDoc('+d.id+')', '🗑️ حذف']);
+  }
+  if(d.isOutputGroup){
+    const ids = d.lines.map(x=>x.id).join(',');
+    if(d.lines.every(canModifyM)){ extra.push(['no-btn', "batchM('delete','"+ids+"')", '🗑️ حذف (همه)']); d.lines.forEach(x=>extra.push(['mid-btn', 'editDocM('+x.id+')', '✏️ '+itemName(x.item)])); }
+    if(st==='approved' && (isReceiver || priv)) d.lines.filter(x=>!hasReturnM(x.id)).forEach(x=>extra.push(['mid-btn', 'requestReturn('+x.id+')', '↩️ سند برگشتی '+itemName(x.item)]));
+  } else
+  if(d.type==='output'){
+    if(st==='approved' && (isReceiver || priv) && !hasReturnM(d.id))
+      extra.push(['mid-btn', 'requestReturn('+d.id+')', '↩️ سند برگشتی']);
+  }
+  if(d.type==='production' && st==='approved' && (isDocUnit || isSender || priv))
+    extra.push(['no-btn', 'cancelDoc('+d.id+')', '↩️ لغو تولید']);
+  if(['consume','waste','shortage','excess','receipt','initial'].includes(d.type) && st==='approved' && (d.type==='initial' ? canAccessSection('sec-initial-inv') : (isDocUnit || isSender || priv)))
+    extra.push(['no-btn', 'cancelDoc('+d.id+')', '↩️ لغو']);
+  const extraHtml = extra.length ? '<div class="doc-actions" style="flex-wrap:wrap">'+
+    extra.map(x=>'<button class="'+x[0]+'" onclick="'+x[1]+'">'+x[2]+'</button>').join('')+'</div>' : '';
+
+  if(isViewerM()){ primary=''; extra=[]; }
+  const extraHtml2 = extra.length ? '<div class="doc-actions" style="flex-wrap:wrap">'+extra.map(x=>'<button class="'+x[0]+'" onclick="'+x[1]+'">'+x[2]+'</button>').join('')+'</div>' : '';
+  return '<div class="card" style="'+(d.type==='return'?'background:var(--purple-l)':'')+'">'+
+    '<div class="doc-top"><span class="doc-no">'+esc(d.docNo || ('#'+d.id))+'</span>'+
+      '<span class="doc-status" style="background:'+(STATUS_BG[st]||'#F0F2F5')+';color:'+(STATUS_COLORS[st]||'#6B7268')+'">'+esc(STATUS_LABELS[st]||st)+'</span></div>'+
+    '<div class="doc-type">'+esc(docTypeLabel(d))+'</div>'+
+    (d.isOutputGroup
+      ? '<div class="doc-type">'+fmt(d.lines.length)+' ردیف</div>'+d.lines.map(x=>'<div class="doc-item"><span>'+itemNameHtmlM(x.item)+'</span><b>'+fmt(x.qty)+' '+esc(itemUnit(x.item))+'</b></div>').join('')
+      : '<div class="doc-item"><span>'+itemNameHtmlM(d.item)+'</span><b>'+fmt(d.qty)+' '+esc(itemUnit(d.item))+'</b></div>')+
+    (d.type==='production' ? (()=>{ const ch=(D.docs||[]).filter(x=>x.parentDocId===d.id&&(x.type==='consume'||x.type==='waste')); return ch.length ? '<details class="doc-note"><summary>'+fmt(ch.length)+' ردیف مصرف مواد</summary>'+ch.map(x=>'<div>'+esc(itemName(x.item))+' — '+fmt(x.qty)+' '+esc(itemUnit(x.item))+'</div>').join('')+'</details>' : ''; })() : '')+
+    '<div class="doc-route"><span>'+esc(from)+'</span><span class="a">&#8592;</span><span>'+esc(to)+'</span></div>'+
+    '<div class="doc-meta"><span>'+esc(d.createdBy||'')+'</span><span style="direction:ltr">'+esc(d.date||'')+'</span></div>'+
+    (d.note?'<div class="doc-note">'+esc(d.note)+'</div>':'')+
+    (d.status==='rejected'&&d.rejectedBy?'<div class="doc-note" style="color:var(--danger)">❌ رد شد توسط '+esc(userNameM(d.rejectedBy))+(d.rejectStage==='warehouse'?' (انباردار)':'')+'</div>':'')+
+    (d.reversal?'<div class="doc-note" style="color:var(--danger)">↩️ باطل با سند معکوس '+esc(d.reversal.no)+(d.cancelReason?' — '+esc(d.cancelReason):'')+'</div>':'')+
+    primary + extraHtml2 +
+  '</div>';
+}
+function btns(okFn, noFn, okLabel){
+  return '<div class="doc-actions"><button class="ok-btn" onclick="'+okFn+'">'+okLabel+'</button>'+
+    '<button class="no-btn" onclick="'+noFn+'">رد</button></div>';
+}
+
+async function act(fn, okMsg){
+  if(S.busy) return; S.busy = true;
+  try{ await fn(); await loadData(); render(); toast(okMsg); }
+  catch(e){ toast(e.message, true); }
+  finally{ S.busy = false; }
+}
+// اقدامِ گروهی روی همه‌ی ردیف‌های یک سند (همه یا هیچ - سمتِ سرور)
+function batchM(action, idsCsv){
+  const ids = String(idsCsv).split(',').map(Number);
+  let dueDays;
+  if(action==='output-warehouse-approve'){ dueDays=askReworkDueM(ids); if(dueDays===null) return; }
+  const run = r => act(()=>api('/api/doc/batch',{method:'POST',body:JSON.stringify({action, docIds:ids, reason:r, dueDays})}), 'انجام شد ('+fmt(ids.length)+' ردیف)');
+  if(dueDays!==undefined) return run();
+  if(['output-warehouse-reject','output-reject','delete','cancel'].includes(action)) return withReason((action==='delete'?'حذف':'رد')+' سند '+ids[0]+' ('+ids.length+' ردیف)', run);
+  if(!confirm('همه‌ی '+ids.length+' ردیفِ سند '+ids[0]+' با هم تایید شوند؟')) return;
+  run();
+}
+const approveOutput = id => act(()=>api('/api/doc/output/approve',{method:'POST',body:JSON.stringify({docId:id, actorUsername:user.username})}), 'خروج تایید و موجودی منتقل شد');
+// لغو / رد / حذف دلیلِ اجباری دارد (حداقل ۳ حرف) - سرور هم بدونِ آن نمی‌پذیرد
+function askReasonM(title){ const r = prompt(title + '\nدلیل (اجباری):'); if(r === null) return null; if(r.trim().length < 3){ toast('دلیل حداقل ۳ حرف باشد', true); return null; } return r.trim(); }
+const withReason = (title, fn) => { const r = askReasonM(title); if(r) fn(r); };
+function userNameM(u){ const x=(D.users||[]).find(v=>v.username===u); return (x&&x.fullname)||u||''; }
+function canModifyM(d){ return !!user && !isViewerM() && (user.role==='admin' || d.createdBy===user.username) && ['pending','pending_warehouse','pending_production','pending_approval','pending_dispatch'].includes(d.status) && !(d.status==='pending' && d.warehouseApprovedBy) && !d.reworkId && !(d.type==='consume' && d.parentDocId); }
+const rejectOutputM = id => withReason('رد سند '+id+' (کالا نزدِ فرستنده می‌ماند)', r => act(()=>api('/api/doc/output/reject',{method:'POST',body:JSON.stringify({docId:id, reason:r})}), 'سند رد شد'));
+async function editDocM(id){
+  const d=(D.docs||[]).find(x=>x.id===id); if(!d) return;
+  const v=prompt('ویرایش «'+itemName(d.item)+'»\nتعداد جدید:', String(d.qty)); if(v===null) return;
+  const qty=parseFloat(normFa(v)); if(!(qty>0)) return toast('تعداد نامعتبر است', true);
+  const note=prompt('توضیح:', d.note||''); 
+  act(()=>api('/api/doc/'+id+'/edit',{method:'POST',body:JSON.stringify({qty, note: note===null ? undefined : note})}), 'سند ویرایش شد');
+}
+const deleteDoc = id => withReason('حذف سند '+id, r => act(()=>api('/api/doc/'+id,{method:'DELETE',body:JSON.stringify({reason:r})}), 'سند حذف شد'));
+const cancelDoc = id => withReason('لغو سند '+id, r => act(()=>api('/api/doc/'+id+'/cancel',{method:'POST',body:JSON.stringify({reason:r})}), 'سند لغو و موجودی برگشت داده شد'));
+const warehouseApprove = id => { const dueDays=askReworkDueM([id]); if(dueDays===null) return; act(()=>api('/api/doc/output/warehouse-approve',{method:'POST',body:JSON.stringify({docId:id, dueDays, actorUsername:user.username})}), 'تایید انباردار ثبت شد'); };
+const warehouseReject  = id => withReason('رد سند '+id, r => act(()=>api('/api/doc/output/warehouse-reject',{method:'POST',body:JSON.stringify({docId:id, reason:r})}), 'سند رد شد'));
+const approveAdjust = async id => {
+  const d = (D.docs||[]).find(x=>x.id===id);
+  // انباردار پیش از تاییدِ اضافات/کسری باید از ثبتِ کاملِ اسنادِ سپیدار مطمئن باشد
+  if(user.role==='warehouse' && d && (d.type==='excess' || d.type==='shortage')){
+    const lbl = d.type==='excess' ? 'اضافات' : 'کسری';
+    const ok = await confirmModal('⚠️ پیش از تأیید سند '+lbl+'، از ثبت کامل اسناد سپیدار (رسیدها و حواله‌های انبار) اطمینان حاصل فرمایید.\n\nاگر هنوز سندی از سپیدار ثبت نشده، ابتدا آن را ثبت کنید؛ در غیر این صورت '+lbl+' ممکن است ساختگی باشد و موجودی را خراب کند.', {title:'⚠️ هشدار پیش از تأیید '+lbl, confirmLabel:'اسناد سپیدار کامل ثبت شده است؛ ادامه', cancelLabel:'انصراف'});
+    if(!ok) return;
+  }
+  return act(()=>api('/api/doc/pending-adjustment/approve',{method:'POST',body:JSON.stringify({docId:id, actorUsername:user.username})}), 'سند تایید و موجودی اصلاح شد');
+};
+const approveProduction = id => act(()=>api('/api/doc/production/approve',{method:'POST',body:JSON.stringify({docId:id, actorUsername:user.username})}), 'تولید تایید شد و به موجودی اضافه شد');
+const rejectProduction  = id => withReason('رد تولید '+id, r => act(()=>api('/api/doc/production/reject',{method:'POST',body:JSON.stringify({docId:id, reason:r})}), 'تولید رد شد'));
+const rejectAdjust  = id => withReason('رد سند '+id, r => act(()=>api('/api/doc/pending-adjustment/reject',{method:'POST',body:JSON.stringify({docId:id, reason:r})}), 'سند رد شد'));
+const approveReturn = id => act(()=>api('/api/doc/return/approve',{method:'POST',body:JSON.stringify({docId:id, actorUsername:user.username})}), 'برگشت تایید و موجودی منتقل شد');
+const rejectReturn  = id => withReason('رد برگشت '+id, r => act(()=>api('/api/doc/return/reject',{method:'POST',body:JSON.stringify({docId:id, reason:r})}), 'برگشت رد شد'));
+const requestReturn = id => { const d=(D.docs||[]).find(x=>x.id===id); go('return'); if(d){ if(privileged()) S.dept=d.toUnit; pickReturnDoc(id); } };
+
+/* --- ثبت سند --- */
+function viewNew(){
+  const a = [
+    ['production','تولید','محصول بخش + مصرف خودکار مواد','#3C3489'],
+    ['consume','مصرف','کسر مستقیم از موجودی بخش','#791F1F'],
+    ['output','خروج به بخش','ارسال به بخش بعدی، با تایید گیرنده','#F5821F'],
+    ['waste','ضایعات','با تایید سرپرست','#854F0B'],
+    ['adjust','کسری و اضافات','تعدیل موجودی','#2563EB'],
+    ['return','سند برگشتی','برگرداندنِ کالای دریافتی به بخش قبلی (کل یا بخشی از آن)','#0F766E']
+  ].filter(x=>canAccessSection(SCREEN_SECTION[x[0]]));
+  { const md=myDeptId(); if(canAccessSection('sec-output') && (privileged() || md==='inject' || md==='solder')){ const n=(D.docs||[]).filter(d=>canRepairM(d)).length;
+    a.unshift(['rework', md==='solder' ? '🔧 معیوب‌های برگشتی'+(n?' ('+fmt(n)+')':'') : '🔧 برگشت معیوب', md==='solder' ? 'تحویل و تعمیرِ کالای معیوبی که تزریق برگردانده' : 'کالای خراب را با علت به لحیم برمی‌گرداند','#B45309']); } }
+  if(canShipDispatchM()){ const n=dispatchGroupsM().filter(g=>g.st==='pending'||g.st==='waybill').length; a.unshift(['dispatch','🚚 حواله ارسال بار'+(n?' ('+fmt(n)+')':''),'ارسال به مشتری + ضمیمه‌ی بارنامه','#185FA5']); }
+  if(!a.length) return '<div class="empty">دسترسی به ثبت سند برای نقش شما بسته است</div>';
+  return '<div class="actions">'+a.map(x=>'<button class="action" style="border-right:4px solid '+x[3]+'" onclick="go(\''+x[0]+'\')">'+
+    '<span class="t">'+x[1]+'</span><span class="d">'+x[2]+'</span></button>').join('')+'</div>';
+}
+
+function stepper(){
+  return '<div class="card"><div class="lbl">تعداد</div><div class="stepper">'+
+    '<button class="minus" onclick="bumpQty(-'+(S.screen==='rework'?1:50)+')">&#8722;</button>'+
+    '<input type="number" inputmode="decimal" value="'+S.qty+'" oninput="onQtyInput(this.value)">'+
+    '<button class="plus" onclick="bumpQty('+(S.screen==='rework'?1:50)+')">+</button></div>'+
+    '<div class="presets">'+(S.screen==='rework'?[5,10,20,50]:[100,250,500,1000]).map(v=>'<button onclick="setQty('+v+')">'+fmt(v)+'</button>').join('')+'</div></div>';
+}
+function bumpQty(n){ S.qty = Math.max(0, (parseFloat(S.qty)||0) + n); render(); if(S.screen==='rework') refreshReworkPlan(); }
+function onQtyInput(v){
+  S.qty = parseFloat(v)||0;
+  if(S.screen==='production' && S.materials) refreshBomRows();
+  if(S.screen==='rework') refreshReworkPlan();
+}
+function refreshBomRows(){
+  const dept = privileged()?S.dept:myDeptId();
+  const inv = (D.inventory||{})[dept]||{};
+  (S.materials||[]).forEach((m,i)=>{
+    const el = document.getElementById('mat-'+i);
+    if(!el) return;
+    const need = matNeed(m), have = inv[materialCode(m)]||0;
+    el.textContent = fmt(need) + ' ' + (m.unit||'');
+    el.style.color = have+0.001<need ? 'var(--danger)' : 'var(--green)';
+  });
+}
+function setQty(v){ S.qty = v; render(); if(S.screen==='production') loadBom(); if(S.screen==='rework') refreshReworkPlan(); }
+
+// دقیقاً هم‌منطقِ computeProductsWithMaterials()/prodFilteredProducts نسخه‌ی وب: قبل از
+// نمایشِ لیستِ محصولات، برای هر محصول فرمولش (با qty=1، صرف‌نظر از تعدادِ واقعیِ درخواستی)
+// چک می‌شه و فقط اونایی که موادشون توی این بخش کامل موجوده پیشنهاد می‌شن - بقیه (کسری‌دار،
+// ماده‌ی دسته‌بندی‌نشده، یا اصلاً بدون فرمول برای این بخش) از لیستِ انتخاب حذف می‌شن، دقیقاً
+// همون‌جوری که نسخه‌ی وب انجام می‌ده.
+async function loadAvailableProducts(dept){
+  const prods = ((D.productDefinitions||{})[dept] || []).filter(p => !(dept==='cut' && p.inactive)); // برشِ غیرفعال در سپیدار پیشنهاد نمی‌شود
+  if (prods.length === 0) { S.availProducts = []; if(S.screen==='production') render(); return; }
+  const inv = (D.inventory||{})[dept] || {};
+  const results = await Promise.all(prods.map(async p => {
+    if (!p.code) return { product: p, hasAll: false, noFormula: true, hasUnclassified: false };
+    try {
+      const r = await api('/api/bom/suggest/'+encodeURIComponent(dept)+'/'+encodeURIComponent(p.code)+'?qty=1');
+      if (!r.success || !r.materials || r.materials.length === 0) {
+        return { product: p, hasAll: false, noFormula: true, hasUnclassified: false };
+      }
+      const hasUnclassified = !!r.hasUnclassified;
+      // ورودیِ زنجیره ممکن است فقط در رنگِ دیگری موجود باشد (colorAvailability)
+      const ownOk = r.materials.filter(m => !isStageKeyM(m.code)).every(m => (inv[materialCode(m)] || 0) > 0);
+      const chainOk = r.colorAvailability ? r.colorAvailability.some(a => a.ready) : r.materials.filter(m => isStageKeyM(m.code)).every(m => (inv[materialCode(m)] || 0) > 0);
+      const hasAll = !hasUnclassified && ownOk && chainOk;
+      return { product: p, hasAll, noFormula: false, hasUnclassified };
+    } catch(e) {
+      return { product: p, hasAll: false, noFormula: true, hasUnclassified: false };
+    }
+  }));
+  if (S.availDept === dept) { // اگه توی این فاصله بخش عوض نشده باشه
+    S.availProducts = results;
+    if (S.screen==='production') render();
+  }
+}
+
+// ===== لیزر و بسته‌بندی: برند/نوع پک هنگامِ تولید (همان قانونِ نسخه‌ی وب، CLAUDE.md) =====
+const VARIANT_DEPTS_M = ['laser','pack'];
+function stageSlug(s){ return String(s||'').replace(/ي/g,'ی').replace(/ك/g,'ک').trim().replace(/^پک\s+/,'').replace(/\s+/g,'_').replace(/-/g,'_'); }
+function variantCandidates(dept){
+  const inv = (D.inventory||{})[dept]||{};
+  const src = dept==='laser' ? ((D.productDefinitions||{}).inject||[]) : ((D.productDefinitions||{}).laser||[]);
+  return src.filter(p=>stockAnyColor(inv, p.code)>0);
+}
+// بسته‌بندی: «برند پک» از فهرستِ برندها (+ نوع‌پک‌های قدیمی)؛ پیش‌فرض = برندِ لیزرِ کالا
+function variantOptions(dept){ const a=(D.appSettings||{}); if(dept==='laser') return a.brands||[];
+  const seen=new Set(); return (a.brands||[]).concat(a.packTypes||[]).filter(x=>{const k=stageSlug(x); if(seen.has(k)) return false; seen.add(k); return true;}); }
+function variantTarget(dept){
+  const base = variantCandidates(dept).find(p=>p.code===S.base);
+  if(!base || !S.variant) return null;
+  if(dept==='laser') return 'LASER-'+base.productCode+'-'+stageSlug(S.variant);
+  if(!base.brand) return null;
+  return 'PACK-'+base.productCode+'-'+stageSlug(base.brand)+'-'+stageSlug(S.variant);
+}
+function pickBase(code){
+  const dept = privileged()?S.dept:myDeptId();
+  if(dept==='pack'){ const b = variantCandidates(dept).find(p=>p.code===code); const def = b && b.brand && variantOptions(dept).find(v=>stageSlug(v)===stageSlug(b.brand)); S.variant = def || null; }
+  S.pickQuery = ''; S.base = code; S.color = DEFAULT_COLOR; S.colorUserSet = false; S.colorAvail = null; S.item = null; S.materials = null; S.formula = null; S.formulaOptions = []; applyVariant(); }
+function pickVariant(v){ S.variant = v; S.item = null; S.materials = null; S.formula = null; S.formulaOptions = []; applyVariant(); }
+function applyVariant(){
+  const dept = privileged()?S.dept:myDeptId();
+  S.item = variantTarget(dept);
+  render();
+  if(S.item) loadBom();
+}
+// فهرستِ محصولِ فرمِ تولید: جستجو بالای فهرست؛ وقتی محصولی انتخاب شده و جستجویی نیست فقط همان محصول نشان داده می‌شود
+function prodSearchBox(){
+  return '<input class="pick-search" placeholder="جستجوی محصول: نام یا کد…" value="'+esc(S.pickQuery||'')+'" oninput="S.pickQuery=this.value;render();var e=document.querySelector(\'.pick-search\');if(e){e.focus();e.setSelectionRange(e.value.length,e.value.length);}">';
+}
+function prodPickList(items, selected, hay, btn, clearJs){
+  const q=(S.pickQuery||'').trim().toLowerCase().split(/\s+/).filter(Boolean);
+  if(selected && !q.length){
+    const it=items.find(x=>x.code===selected);
+    if(it) return btn(it)+'<button class="chip" style="margin-top:6px" onclick="'+clearJs+'">↺ انتخاب محصول دیگر</button>';
+  }
+  const shown=items.filter(x=>q.every(w=>hay(x).toLowerCase().includes(w)));
+  return shown.length ? shown.map(btn).join('') : '<div class="empty">محصولی با این جستجو نیست</div>';
+}
+function viewVariantProduction(dept){
+  const isLaser = dept==='laser';
+  const cands = variantCandidates(dept);
+  const opts = variantOptions(dept);
+  const baseList = cands.length ? prodSearchBox()+prodPickList(cands, S.base, p=>(p.productCode||'')+' '+p.code+' '+(p.name||'')+' '+(p.sepidarName||''),
+      p=>'<button class="opt'+(S.base===p.code?' on':'')+'" onclick="pickBase(\''+esc(p.code)+'\')">'+
+      '<span class="code">'+esc(p.productCode||p.code)+'</span><span class="iname">'+itemNameHtmlM(p.code)+(p.inactive?' <span style="color:#b45309;font-size:11px">⚠️ غیرفعال در سپیدار</span>':'')+'</span></button>',
+      'S.base=null;S.item=null;S.materials=null;render()')
+    : '<div class="empty">'+(isLaser?'محصولِ تزریق‌شده‌ای در بخش لیزر موجود نیست':'محصولِ لیزرخورده‌ای در بخش بسته‌بندی موجود نیست')+'</div>';
+  const varList = opts.length ? '<div class="chips" style="flex-wrap:wrap">'+opts.map(v=>'<button class="chip'+(S.variant===v?' on':'')+'" onclick="pickVariant(\''+esc(v)+'\')">'+esc(v)+'</button>').join('')+'</div>'
+    : '<div class="empty">فهرست برندها در تنظیمات تعریف نشده</div>';
+  let bom = '';
+  if(S.item){
+    const inv = (D.inventory||{})[dept]||{};
+    const list = S.materials;
+    bom = '<div class="bom"><div class="t">مواد مصرفی</div><div class="h">'+(list===null?'در حال دریافت...':(list.length?'خودکار از فرمول':'فرمولی پیدا نشد'))+'</div>'+
+      (list||[]).map((m,i)=>{ const code=materialCode(m), have=inv[code]||0, need=matNeed(m);
+        const editable = MAT_EDIT_DEPTS_M.includes(dept) && !isStageKeyM(code);
+        const qtyHtml = m.manual ? '<input type="number" inputmode="decimal" value="'+need+'" oninput="setMatQty('+i+',this.value)" style="width:80px;padding:5px;border:1px solid var(--line);border-radius:8px">'
+          : '<div class="qty" id="mat-'+i+'" style="font-size:13.5px;color:'+(have+0.001<need?'var(--danger)':'var(--green)')+'">'+fmt(need)+' '+esc(m.unit||'')+'</div>';
+        return '<div class="card row-item" style="box-shadow:none;margin-bottom:7px"><div class="grow"><div class="code" style="color:var(--sub)">'+esc(code)+'</div><div class="iname">'+esc(m.name)+'</div></div>'+
+          '<div>'+qtyHtml+'<div class="unit">موجود '+fmt(have)+'</div></div>'+
+          (editable?'<button onclick="removeMat('+i+')" style="margin-right:8px;border:none;background:var(--danger);color:#fff;border-radius:8px;padding:6px 10px">✕</button>':'')+'</div>'; }).join('')+matEditTools(dept, inv)+'</div>';
+  }
+  if(S.item){
+    const fo=S.formulaOptions||[];
+    const fp = fo.length===1 && S.formulaLocked ? '<div class="card muted" style="font-size:12px">🧾 نوعِ کابل: '+esc(fo[0].name)+' (فرمول '+esc(fo[0].key)+') — از روی موجودیِ ورودی</div>'
+      : fo.length>1 ? '<div class="card"><div class="lbl">فرمول (نوع کابل) — کد محصول یکی است</div><div class="stack">'+
+        fo.map(o=>'<button class="opt'+(S.formula===o.key?' on':'')+'" onclick="pickFormula(\''+esc(o.key)+'\')"><span class="iname">'+esc(o.name)+'</span></button>').join('')+'</div></div>' : '';
+    bom = fp + bom;
+  }
+  return '<div class="stack">'+
+    '<div class="card"><div class="lbl">'+(isLaser?'محصولِ تزریق‌شده (موجود در لیزر)':'محصولِ لیزرخورده (موجود در بسته‌بندی) - برندش همراهش است')+'</div><div class="stack">'+baseList+'</div></div>'+
+    '<div class="card"><div class="lbl">'+(isLaser?'برند':'برند پک (پیش‌فرض: برندِ لیزر؛ اگر فرق دارد عوض کنید)')+'</div><div class="stack">'+varList+'</div></div>'+
+    colorCard(dept) + stepper()+ dateCard() + bom +
+    '<button class="submit" style="background:#3C3489" '+(S.item?'':'disabled')+' onclick="submitProduction()">ثبت تولید</button>'+
+  '</div>';
+}
+
+function viewProduction(dept){
+  if (VARIANT_DEPTS_M.includes(dept)) return viewVariantProduction(dept);
+  const allProds = (D.productDefinitions||{})[dept] || [];
+  if (S.availDept !== dept) {
+    S.availDept = dept; S.availProducts = null;
+    loadAvailableProducts(dept);
+  }
+
+  let opts, note = '';
+  if (allProds.length === 0) {
+    opts = '<div class="empty">برای این بخش محصولی تعریف نشده — از نسخه وب، تب «تعریف محصول»</div>';
+  } else if (S.availProducts === null) {
+    opts = '<div class="empty"><span class="spin"></span>&nbsp; در حال بررسی موجودی مواد اولیه در بخش...</div>';
+  } else {
+    const ready = S.availProducts.filter(r=>r.hasAll).map(r=>r.product);
+    const withMissing = S.availProducts.filter(r=>!r.hasAll && !r.noFormula && !r.hasUnclassified).length;
+    const withUnclassified = S.availProducts.filter(r=>r.hasUnclassified).length;
+    const withoutFormula = S.availProducts.filter(r=>r.noFormula).length;
+    opts = ready.length ? prodSearchBox()+prodPickList(ready, S.item, p=>p.code+' '+(p.productCode||'')+' '+(p.name||''),
+        p=>'<button class="opt'+(S.item===p.code?' on':'')+'" onclick="pickProduct(\''+esc(p.code)+'\')">'+
+        '<span class="code">'+esc(p.code)+'</span><span class="iname">'+itemNameHtmlM(p.code)+'</span></button>',
+        'S.item=null;S.materials=null;S.formula=null;S.formulaOptions=[];render()')
+      : '<div class="empty">هیچ محصولی با موجودیِ کاملِ مواد اولیه در این بخش پیدا نشد</div>';
+    let msg = fmt(ready.length)+' از '+fmt(allProds.length)+' محصول این بخش، مواد اولیه‌شون کامل موجوده.';
+    if (withMissing>0) msg += ' '+fmt(withMissing)+' محصول کسری مواد داره.';
+    if (withUnclassified>0) msg += ' '+fmt(withUnclassified)+' محصول ماده‌ی دسته‌بندی‌نشده داره (توی نسخه‌ی وب دسته‌بندیش کنید).';
+    if (withoutFormula>0) msg += ' '+fmt(withoutFormula)+' محصول فرمولِ کامل برای این بخش نداره.';
+    note = '<div class="card muted" style="font-size:11px">'+msg+'</div>';
+  }
+
+  let bom = '';
+  if(S.item){
+    const inv = (D.inventory||{})[dept]||{};
+    const list = S.materials;
+    const fo = S.formulaOptions||[];
+    const lockedF = fo.length===1 && S.formulaLocked ? '<div class="card muted" style="font-size:12px">🧾 نوعِ کابل: '+esc(fo[0].name)+' (فرمول '+esc(fo[0].key)+') — از روی موجودیِ ورودی</div>' : '';
+    const formulaPick = lockedF ? lockedF : fo.length>1 ? '<div class="card"><div class="lbl">فرمول (نوع کابل) — کد محصول یکی است</div><div class="stack">'+
+      fo.map(o=>'<button class="opt'+(S.formula===o.key?' on':'')+'" onclick="pickFormula(\''+esc(o.key)+'\')"><span class="iname">'+esc(o.name)+(o.ready?' ✅':' — مواد ناقص')+'</span></button>').join('')+'</div></div>' : '';
+    bom = formulaPick + '<div class="bom"><div class="t">مواد مصرفی (از فرمول سپیدار)</div>'+
+      '<div class="h">'+(list===null?'در حال دریافت...':(list.length?'خودکار از BOM پر شد':'برای این محصول فرمولی پیدا نشد — مصرف را جداگانه ثبت کنید'))+'</div>'+
+      (list||[]).map((m,i)=>{
+        const code = materialCode(m), have = inv[code]||0, need = matNeed(m);
+        return '<div class="card row-item" style="box-shadow:none;margin-bottom:7px">'+
+          '<div class="grow"><div class="code" style="color:var(--sub)">'+esc(code)+'</div><div class="iname">'+esc(m.name)+'</div></div>'+
+          '<div><div class="qty" id="mat-'+i+'" style="font-size:13.5px;color:'+(have+0.001<need?'var(--danger)':'var(--green)')+'">'+fmt(need)+' '+esc(m.unit||'')+'</div>'+
+          '<div class="unit">موجود '+fmt(have)+'</div></div></div>';
+      }).join('')+'</div>';
+  }
+  return '<div class="stack">'+
+    '<div class="card"><div class="lbl">محصول این بخش (آماده‌ی تولید)</div><div class="stack">'+opts+'</div></div>'+
+    note +
+    colorCard(dept) + stepper()+ dateCard() + bom +
+    '<button class="submit" style="background:#3C3489" '+(S.item?'':'disabled')+' onclick="submitProduction()">ثبت تولید</button>'+
+  '</div>';
+}
+// نیاز واقعی هر ماده همیشه از qtyPerUnit ضربدر تعداد فعلی حساب می‌شود، نه از
+// suggestedQty ای که موقع دریافت فرمول (با تعداد قبلی) برگشته بود.
+function matNeed(m){
+  const per = (m.qtyPerUnit !== undefined && m.qtyPerUnit !== null) ? m.qtyPerUnit : null;
+  const qty = parseFloat(S.qty)||0;
+  if(m.manualQty !== undefined && m.manualQty !== null) return m.manualQty; // ماده‌ی دستیِ بسته‌بندی
+  const raw = per !== null ? per * qty : (m.suggestedQty||0);
+  return Math.round(raw * 10000) / 10000;
+}
+function pickProduct(code){ S.pickQuery=''; S.color = DEFAULT_COLOR; S.colorUserSet = false; S.colorAvail = null; S.item = code; S.materials = null; S.formula = null; S.formulaOptions = []; render(); loadBom(); }
+// انتخابِ رنگ: در برش دستی؛ در بقیه از ورودی (خودکار بعد از دریافتِ فرمول) ولی قابل‌تغییر
+function colorCard(dept){
+  if(!COLOR_DEPTS_M.includes(dept) || !S.item) return '';
+  const av = {}; (S.colorAvail||[]).forEach(a=>{ av[a.color]=a; });
+  const cur = S.color || DEFAULT_COLOR;
+  return '<div class="card"><div class="lbl">رنگ کابل'+(dept==='cut'?'':' (از ورودی)')+'</div><div class="stack">'+
+    colorListM().map(c=>{ const a = av[c]; const extra = dept==='cut'||!a ? '' : (a.ready?' — موجود '+fmt(a.qty):' — ورودی ندارد');
+      return '<button class="opt'+(cur===c?' on':'')+'" onclick="pickColor(\''+esc(c)+'\')"><span class="iname">'+(COLOR_DOTS_M[c]||'🎨')+' '+esc(c)+extra+'</span></button>'; }).join('')+
+    '</div></div>';
+}
+function pickColor(c){ S.color = c; S.colorUserSet = true; S.materials = null; render(); loadBom(); }
+function pickFormula(k){ S.formula = k; S.materials = null; render(); loadBom(); }
+/* بسته‌بندی: موادِ بسته‌بندیِ پیشنهادی قابل‌حذف است و ماده‌ی دیگری از موجودیِ بخش اضافه می‌شود؛ ردیفِ LASER-… ثابت است */
+const MAT_EDIT_DEPTS_M = ['pack'];
+function removeMat(i){
+  const m = (S.materials||[])[i]; if(!m) return;
+  if(m.manual) S.matAdded = (S.matAdded||[]).filter(x=>x!==m); else (S.matRemoved = S.matRemoved||[]).push(m.code);
+  S.materials.splice(i,1); render();
+}
+function addMat(code){
+  if(!code) return;
+  const o = {code, name:itemName(code), unit:itemUnit(code), manualQty:parseFloat(S.qty)||1, manual:true};
+  (S.matAdded = S.matAdded||[]).push(o); S.materials.push(o); render();
+}
+function setMatQty(i,v){ const m=(S.materials||[])[i]; if(m) m.manualQty = parseFloat(v)||0; }
+function matEditTools(dept, inv){
+  if(!MAT_EDIT_DEPTS_M.includes(dept) || !S.materials) return '';
+  const used = new Set(S.materials.map(m=>materialCode(m)));
+  const cands = Object.keys(inv).filter(k=>inv[k]>0 && !isStageKeyM(k) && !used.has(k));
+  return '<select style="width:100%;margin-top:4px;padding:9px;border:1px solid var(--line);border-radius:10px;font-family:inherit" onchange="addMat(this.value)">'+
+    '<option value="">➕ افزودن ماده‌ی بسته‌بندی...</option>'+cands.map(k=>'<option value="'+esc(k)+'">'+esc(itemName(k))+' (موجود '+fmt(inv[k])+')</option>').join('')+'</select>';
+}
+async function loadBom(){
+  if(!S.item) return;
+  const dept = privileged()?S.dept:myDeptId();
+  try{
+    const r = await api('/api/bom/suggest/'+encodeURIComponent(dept)+'/'+encodeURIComponent(COLOR_DEPTS_M.includes(dept) ? withColorKey(S.item, S.color) : S.item)+'?qty='+(S.qty||1)+(S.formula?'&formula='+encodeURIComponent(S.formula):''));
+    S.materials = (r && r.materials) || [];
+    // بسته‌بندی: حذف/افزوده‌های دستیِ همین محصول را نگه دار
+    const mk = dept+'|'+S.item;
+    if(S.matKey !== mk){ S.matKey = mk; S.matRemoved = []; S.matAdded = []; }
+    if(MAT_EDIT_DEPTS_M.includes(dept)) S.materials = S.materials.filter(m=>!S.matRemoved.includes(m.code)).concat(S.matAdded);
+    S.formula = (r && r.formulaKey) || null;
+    S.formulaOptions = (r && r.formulaOptions) || [];
+    S.formulaLocked = !!(r && r.formulaFromLots && r.formulaFromLots.locked);
+    S.colorAvail = (r && r.colorAvailability) || null;
+    // ورودیِ رنگِ فعلی نیست ولی رنگِ دیگری هست → همان (مگر کاربر خودش رنگ زده باشد)
+    if(dept!=='cut' && S.colorAvail && !S.colorUserSet){
+      const cur = S.colorAvail.find(a=>a.color===(S.color||DEFAULT_COLOR)), ready = S.colorAvail.filter(a=>a.ready);
+      if(cur && !cur.ready && ready.length){ S.color = ready[0].color; return loadBom(); }
+    }
+  }catch(e){ S.materials = []; }
+  if(S.screen==='production') render();
+}
+
+async function submitProduction(){
+  if(S.busy || !S.item) return;
+  const dept = privileged()?S.dept:myDeptId();
+  const qty = parseFloat(S.qty)||0;
+  if(qty<=0) return toast('تعداد را وارد کنید', true);
+  // ===== بررسی موجودی مواد اولیه قبل از صدور سند تولید =====
+  // این چک باید قبل از صدور سند تولید (که موجودی محصول رو زیاد می‌کنه) انجام بشه، نه بعدش -
+  // وگرنه سند تولید صادر می‌شه درحالی‌که اصلاً ماده‌ی کافی برای ساختنش وجود نداره (دقیقاً هم‌منطقِ
+  // چکِ registerProduction() در نسخه‌ی وب).
+  if(S.materials === null){ return toast('صبر کنید تا فرمول مواد بارگذاری شود', true); }
+  if(!S.materials || S.materials.length === 0){
+    return toast('برای این محصول فرمولی پیدا نشد - از نسخه وب مصرف را جداگانه ثبت کنید', true);
+  }
+  const inv = (D.inventory||{})[dept]||{};
+  const shortages = S.materials
+    .map(m => ({ name:m.name, code:materialCode(m), need:matNeed(m), have: inv[materialCode(m)]||0 }))
+    .filter(m => m.have + 0.001 < m.need);
+  if(shortages.length > 0){
+    return toast('موجودی مواد اولیه کافی نیست: '+shortages.map(m=>m.name+' (موجود '+fmt(m.have)+'، نیاز '+fmt(m.need)+')').join('، '), true);
+  }
+  S.busy = true; toast('در حال ثبت...');
+  try{
+    // سند تولید + همه‌ی مصرف‌ها در یک درخواستِ اتمیکِ سرور (یا همه ثبت می‌شن یا هیچ‌کدام)
+    const mats = (S.materials||[]).map(m => ({ item: materialCode(m), qty: matNeed(m) })).filter(m => m.qty > 0);
+    const prodItem = COLOR_DEPTS_M.includes(dept) ? withColorKey(S.item, S.color) : S.item;
+    const r = await api('/api/doc/production-with-materials',{method:'POST',body:JSON.stringify({unit:dept, item:prodItem, qty, note:S.note||'تولید از موبایل', date:docDateStr(), materials:mats, formulaKey:S.formula||null, actorUsername:user.username})});
+    const parent = r.doc && r.doc.id;
+    resetDocDate();
+    await loadData();
+    toast(r.pendingWarehouse ? 'تولید #'+parent+' ثبت شد و منتظر تایید انباردار است' : 'سند تولید #'+parent+' ثبت شد');
+    if(!r.pendingWarehouse)     offerPostProductionOutput(dept, prodItem, qty);
+  }catch(e){ toast(e.message, true); }
+  finally{ S.busy=false; }
+}
+
+// بعد از ثبت تولید، دقیقاً هم‌منطقِ سوالِ «ارسال به بخش دیگر؟» در registerProduction() نسخه‌ی
+// وب: به‌جای یه confirm() مسدودکننده (که با UIِ این اپ جور نیست)، مستقیم فرمِ «خروج به بخش
+// دیگر» با محصولِ تازه‌تولیدشده و بخشِ بعدیِ زنجیره از پیش پر می‌شه؛ کاربر یا «ثبت خروج» می‌زنه
+// یا با تب دیگه‌ای می‌ره و هیچ سندی ساخته نمی‌شه - هیچی خودکار ثبت نمی‌شه.
+function offerPostProductionOutput(fromDept, item, qty){
+  S.screen = 'output';
+  S.item = item;
+  S.qty = qty;
+  S.target = nextDeptOf(fromDept);
+  S.note = 'خروج محصول '+itemName(item)+' پس از تولید';
+  S.postProd = true;
+  window.scrollTo(0,0);
+  render();
+}
+
+// معادلِ resolveInventoryKey/getDeptTargetCodes/getOutputAvailableItems نسخه‌ی وب - محدود
+// کردنِ کالاهای قابل‌ارسالِ فرمِ «خروج به بخش دیگر» به همون قانونِ سراسریِ سیستم: بخش‌های
+// تولیدی (STAGE_DEPTS) فقط محصولِ خودشون رو می‌تونن بفرستن (نه هر ماده‌ی خامی که به هر
+// دلیلی توی موجودیشون مونده)، و فقط به بخش مقصد چیزی می‌ره که طبق فرمول‌ها/دسته‌بندیِ مواد
+// واقعاً ورودیِ اون بخشه. سرور خودش این محدودیت رو چک نمی‌کنه (طبق طراحیِ سیستم - همه‌ی
+// مجوزها سمتِ کلاینته)، پس این فیلتر باید دقیقاً همون‌جایی که وب داره اینجا هم باشه.
+function getItemCode(itemName, deptId){
+  if(deptId){
+    const own = ((D.productDefinitions||{})[deptId]||[]).find(p=>p.name===itemName);
+    if(own) return own.code;
+  }
+  // قانونِ هویتِ کالا: کدِ موجودیِ محصولِ مرحله‌ای همیشه code است (بالا)، نه productCode
+  const it = (D.items||[]).find(i=>i.name===itemName);
+  if(it) return it.code;
+  return '---';
+}
+function resolveInventoryKey(itemName, deptId){
+  const code = getItemCode(itemName, deptId);
+  return code && code!=='---' ? code : itemName;
+}
+function getDeptTargetCodes(toId){
+  const pd = D.productDefinitions||{};
+  const targetCodes = new Set((pd[toId]||[]).map(p=>resolveInventoryKey(p.name, toId)));
+  const mc = D.materialClassification||{};
+  Object.keys(mc).forEach(code=>{ if(mc[code]===toId) targetCodes.add(code); });
+  if(toId==='solder') (pd.cut||[]).forEach(p=>targetCodes.add(resolveInventoryKey(p.name,'cut')));
+  if(toId==='inject') (pd.solder||[]).forEach(p=>targetCodes.add(p.code));
+  if(toId==='laser') (pd.inject||[]).forEach(p=>targetCodes.add(p.code));
+  if(toId==='pack') (pd.laser||[]).forEach(p=>targetCodes.add(p.code));
+  return targetCodes;
+}
+function getOutputAvailableCodes(fromId, toId){
+  const inv = (D.inventory||{})[fromId]||{};
+  let codes = Object.keys(inv).filter(c=>inv[c]>0);
+  if(fromId!=='raw' && STAGE_DEPTS.includes(fromId)){
+    const ownCodes = new Set(((D.productDefinitions||{})[fromId]||[]).map(p=>resolveInventoryKey(p.name, fromId)));
+    codes = codes.filter(c=>ownCodes.has(baseKey(c)));
+  }
+  if(toId){
+    const targetCodes = getDeptTargetCodes(toId);
+    if(targetCodes.size>0) codes = codes.filter(c=>targetCodes.has(c) || targetCodes.has(baseKey(c)));
+  }
+  return codes;
+}
+
+// کالاهای مرتبط با بخش: دارای موجودی، یا (برای اضافات) دارای سابقهٔ تراکنش/تعریف محصول در همان بخش؛ انبارها همه
+function relevantCodes(dept, inv, includeHistory){
+  const seen = new Set((D.transactions||[]).filter(t=>t.unit===dept).map(t=>t.item));
+  (D.productDefinitions&&D.productDefinitions[dept]||[]).forEach(p=>{ if(p.code) seen.add(p.code); if(p.productCode) seen.add(p.productCode); });
+  const d = DEPTS.find(x=>x.id===dept);
+  const isWh = d && d.type==='wh';
+  const defined = new Set();
+  (D.productDefinitions&&D.productDefinitions[dept]||[]).forEach(p=>{ if(p.code) defined.add(p.code); if(p.productCode) defined.add(p.productCode); });
+  // بخش تولیدی: فقط کالای تعریف‌شده در همان بخش؛ انبار: دارای موجودی (اضافات: همه)
+  return Object.keys(inv).filter(c=> isWh ? (inv[c]>0 || includeHistory) : (defined.has(baseKey(c)) && (includeHistory || inv[c]>0)));
+}
+
+// تفکیکِ کالاهای قابل‌انتخاب در ضایعات/کسری/اضافات به «محصولات بخش» و «مواد اولیهٔ بخش»
+function groupedCodes(dept, inv, mode){
+  const defined = new Set();
+  (D.productDefinitions&&D.productDefinitions[dept]||[]).forEach(p=>{ if(p.code) defined.add(p.code); if(p.productCode) defined.add(p.productCode); });
+  const seen = new Set((D.transactions||[]).filter(t=>t.unit===dept).map(t=>t.item));
+  const isProduct = c => defined.has(baseKey(c)) || dept==='finished' || dept==='qc';
+  // اضافات: فقط کالای همین مرحله یا مرحله‌ی قبل (لیزر ← فقط تزریق) - همان قانونِ سرور (STAGE_PREFIX_ALLOWED)
+  const ALLOW = { cut:['CUT'], solder:['CUT','SOL'], inject:['SOL','INJ'], laser:['INJ','LASER'], pack:['LASER','PACK'], finished:['PACK'] };
+  const okHere = c => { const m = String(c).match(/^(CUT|SOL|INJ|LASER|PACK)-/); return !m || !ALLOW[dept] || ALLOW[dept].includes(m[1]); };
+  const codes = Object.keys(inv).filter(c=> mode==='excess' ? okHere(c) && (inv[c]>0 || dept==='raw' || defined.has(baseKey(c)) || seen.has(c)) : inv[c]>0);
+  return { products: codes.filter(isProduct), materials: codes.filter(c=>!isProduct(c)) };
+}
+
+function viewForm(dept){
+  const f = FORMS[S.screen];
+  const inv = (D.inventory||{})[dept]||{};
+  const grouped = (S.screen==='adjust' || S.screen==='waste') ? groupedCodes(dept, inv, (S.screen==='adjust' && S.adjustType==='excess') ? 'excess' : 'stock') : null;
+  const codes = S.screen==='output' ? getOutputAvailableCodes(dept, S.target)
+    : (grouped ? grouped.products.concat(grouped.materials) : Object.keys(inv).filter(c=>inv[c]>0));
+  const optBtn = c => '<button class="opt'+(S.item===c?' on':'')+'" onclick="S.item=\''+esc(c)+'\';render()">'+
+      '<span class="code">'+esc(c)+'</span><span class="iname">'+esc(itemName(c))+'</span>'+
+      '<span class="unit" style="text-align:right">موجودی: '+fmt(inv[c])+' '+esc(itemUnit(c))+'</span></button>';
+  const grpHead = t => '<div style="font-weight:700;font-size:12.5px;margin:10px 0 4px;padding:6px 10px;background:var(--accent-l,#fdebd9);border-radius:8px">'+t+'</div>';
+  const qtyOf = c => 'موجودی: '+fmt(inv[c]||0)+' '+esc(itemUnit(c));
+  const opts = !codes.length
+    ? '<div class="empty">'+(S.screen==='output' ? 'با این بخش مقصد، کالای قابل‌ارسالی از این بخش نیست' : 'موجودی این بخش خالی است')+'</div>'
+    : (grouped && !S.pickGroup && !(S.pickQuery||'').trim()
+        ? '<input class="pick-search" placeholder="جستجو: نام، کد، برند، رنگ…" value="" oninput="S.pickQuery=this.value;S.pickGroup=null;render();var e=document.querySelector(\'.pick-search\');if(e){e.focus();e.setSelectionRange(e.value.length,e.value.length);}">'
+          + (grouped.products.length ? grpHead('🏭 محصولات '+esc(deptName(dept))+' ('+fmt(grouped.products.length)+')')+twoStepList(grouped.products, qtyOf, 'pickFormItem', S.item).replace(/^<input[^>]*>/,'') : '')
+          + (grouped.materials.length ? grpHead('📦 مواد اولیهٔ '+esc(deptName(dept))+' ('+fmt(grouped.materials.length)+')')+twoStepList(grouped.materials, qtyOf, 'pickFormItem', S.item).replace(/^<input[^>]*>/,'') : '')
+        : twoStepList(codes, qtyOf, 'pickFormItem', S.item));
+
+  let extra = '';
+  if(S.screen==='output'){
+    if(S.postProd){
+      extra += '<div class="card" style="background:var(--purple-l);border:1px solid #3C3489">'+
+        '<b>🏭 تولید ثبت شد</b>'+
+        '<div style="font-size:12px;margin-top:4px">می‌خواهید همین محصول را به بخش دیگری ارسال کنید؟ در صورت نیاز بخش/تعداد را تغییر دهید و «ثبت خروج» را بزنید.</div>'+
+        '<button class="chip" style="margin-top:8px" onclick="S.postProd=false;S.docFilter=\'all\';go(\'docs\')">فعلاً نه، فقط تولید ثبت شد</button>'+
+      '</div>';
+    }
+    extra += '<div class="card"><div class="lbl">بخش مقصد</div><div class="chips" style="flex-wrap:wrap">'+
+      DEPTS.filter(d=>d.id!==dept).map(d=>'<button class="chip'+(S.target===d.id?' on':'')+'" onclick="S.target=\''+d.id+'\';S.item=null;render()">'+d.name+'</button>').join('')+
+      '</div></div>';
+  }
+  if(S.screen==='adjust'){
+    extra = '<div class="card"><div class="lbl">نوع تعدیل</div><div style="display:flex;gap:8px">'+
+      [['shortage','کسری'],['excess','اضافات']].map(t=>'<button class="chip'+(S.adjustType===t[0]?' on':'')+'" style="flex:1;justify-content:center;text-align:center" onclick="S.adjustType=\''+t[0]+'\';render()">'+t[1]+'</button>').join('')+
+      '</div></div>';
+    const fks = S.adjustType==='excess' && S.item ? stageFormulaKeysM(S.item) : [];
+    if(fks.length>1) extra += '<div class="card"><div class="lbl">نوعِ کابل (فرمول) — اجباری</div><div class="stack">'+
+      fks.map(k=>'<button class="opt'+(S.adjFk===k?' on':'')+'" onclick="S.adjFk=\''+esc(k)+'\';render()"><span class="iname">'+esc(formulaCableLabelM(k))+'</span></button>').join('')+'</div></div>';
+  }
+  return '<div class="stack">'+
+    '<div class="card"><div class="lbl">'+f.itemLabel+'</div><div class="stack">'+opts+'</div></div>'+
+    extra + stepper()+ dateCard() +
+    '<div class="card"><div class="lbl">توضیح</div><input class="note-input" value="'+esc(S.note)+'" placeholder="اختیاری..." oninput="S.note=this.value"></div>'+
+    '<button class="submit" style="background:'+f.color+'" '+(S.item?'':'disabled')+' onclick="submitForm()">'+f.submit+'</button>'+
+  '</div>';
+}
+
+function pickFormItem(c){ S.item=c; S.adjFk=null; render(); }
+// فرمول‌های کالای مرحله‌ای (برای «نوعِ کابل» در اضافات)
+function stageFormulaKeysM(code){
+  const base=baseKey(code||''); const m=base.match(/^(SOL|INJ|LASER|PACK)-([^-]+)/); if(!m) return [];
+  let def=findDef(base);
+  if(!def || !(def.formulaKeys||[]).length){ for(const d of Object.keys(D.productDefinitions||{})){ const p=(D.productDefinitions[d]||[]).find(x=>x.productCode===m[2]&&(x.formulaKeys||[]).length); if(p){def=p;break;} } }
+  const bf=Object.assign({}, ((D.appSettings||{}).archivedFormulas)||{}, D.bomFormulas||{});
+  return ((def&&def.formulaKeys)||[]).filter(k=>bf[k]);
+}
+function formulaCableLabelM(fk){
+  const bf=Object.assign({}, ((D.appSettings||{}).archivedFormulas)||{}, D.bomFormulas||{}); const f=bf[fk]; if(!f) return 'فرمول '+fk;
+  const cable=(f.materials||[]).filter(m=>m.stage==='cut').map(m=>m.name+' ('+m.code+')').join(' + ');
+  return (cable||f.name)+' — فرمول '+fk;
+}
+/* --- حواله‌ی ارسال بار (انبار محصول) --- */
+function canShipDispatchM(){ return !!user && (user.role==='admin' || user.role==='warehouse' || user.unit===deptName('finished')); }
+function dispatchGroupsM(){
+  const m=new Map();
+  (D.docs||[]).filter(d=>d.type==='dispatch').forEach(d=>{ const k=d.submissionId||('x'+d.id); if(!m.has(k)) m.set(k,[]); m.get(k).push(d); });
+  return [...m.entries()].map(([sid,lines])=>{ lines.sort((a,b)=>a.id-b.id); const live=lines.filter(l=>l.status!=='cancelled');
+    const st = live.some(l=>l.status==='pending_dispatch')?'pending':(!live.length?'cancelled':(live.some(l=>l.waybillPending)?'waybill':'done'));
+    return {sid, lines, live, head:lines[0], st}; }).sort((a,b)=>b.head.id-a.head.id);
+}
+function attUrlM(a){ return '/api/attachments/'+encodeURIComponent(a.file)+'?token='+encodeURIComponent(mToken()); }
+function viewDispatch(){
+  const all=dispatchGroupsM();
+  const sel = S.dspSid ? all.find(g=>g.sid===S.dspSid) : null;
+  if(sel && sel.st==='pending'){
+    const inv=(D.inventory||{}).finished||{};
+    const pend=sel.live.filter(l=>l.status==='pending_dispatch');
+    if(!S.dspQty) { S.dspQty={}; pend.forEach(l=>{ S.dspQty[l.id]=Math.min(l.qty, Math.max(0, inv[l.item]||0)); }); }
+    return '<div class="stack"><button class="chip" onclick="S.dspSid=null;S.dspQty=null;render()">→ فهرستِ حواله‌ها</button>'+
+      '<div class="card"><div class="lbl">حواله '+esc(sel.head.docNo||'')+' · '+esc(sel.head.date||'')+'</div><div style="font-weight:700">'+esc(sel.head.destination||'مشتری')+': '+esc(sel.head.customer||'')+'</div>'+(sel.head.note?'<div class="doc-note">'+esc(sel.head.note)+'</div>':'')+'</div>'+
+      '<div class="card"><div class="lbl">مقدارِ ارسال‌شده (کمتر هم می‌شود؛ ۰ = ارسال نشد)</div>'+pend.map(l=>
+        '<div class="row-item" style="padding:6px 0;border-bottom:1px solid var(--line)"><div class="grow"><div class="iname">'+itemNameHtmlM(l.item,true)+'</div><div class="unit">درخواست '+fmt(l.qty)+' · موجودی '+fmt(inv[l.item]||0)+'</div></div>'+
+        '<input type="number" inputmode="decimal" value="'+(S.dspQty[l.id])+'" oninput="S.dspQty['+l.id+']=parseFloat(this.value)||0" style="width:90px;padding:7px;border:1px solid var(--line);border-radius:8px"></div>').join('')+'</div>'+
+      '<div class="card"><div class="lbl">باربری / راننده</div><input class="note-input" value="'+esc(S.dspCarrier||'')+'" oninput="S.dspCarrier=this.value"></div>'+
+      '<div class="card"><div class="lbl">شماره بارنامه</div><input class="note-input" value="'+esc(S.dspWaybill||'')+'" oninput="S.dspWaybill=this.value"></div>'+
+      '<div class="card"><div class="lbl">📷 عکس بارنامه (اختیاری؛ بعداً هم می‌شود)</div><input type="file" id="dsp-file" accept="image/*,application/pdf" capture="environment"></div>'+
+      '<button class="submit" style="background:#185FA5" onclick="submitShipM()">✅ ثبت ارسال</button></div>';
+  }
+  const list = all.filter(g=>g.st==='pending'||g.st==='waybill').concat(all.filter(g=>g.st==='done').slice(0,10));
+  if(!list.length) return '<div class="empty">حواله‌ی ارسالی نیست</div>';
+  const ST={pending:['منتظر ارسال','#854F0B','#FAEEDA'], waybill:['منتظر بارنامه','#3C3489','#EEEDFE'], done:['ارسال شد','#16a34a','#dcfce7']};
+  return '<div class="stack">'+list.map(g=>{ const s=ST[g.st]||['','','']; const atts=(g.live[0]&&g.live[0].attachments)||[];
+    return '<div class="card"><div class="doc-top"><span class="doc-no">'+esc(g.head.docNo||('#'+g.head.id))+'</span><span class="doc-status" style="background:'+s[2]+';color:'+s[1]+'">'+s[0]+'</span></div>'+
+      '<div style="font-weight:700;margin:4px 0">'+esc(g.head.destination||'مشتری')+': '+esc(g.head.customer||'')+'</div>'+
+      g.lines.map(l=>'<div class="doc-item" style="'+(l.status==='cancelled'?'opacity:.5':'')+'"><span>'+itemNameHtmlM(l.item)+'</span><b>'+fmt(l.qty)+'</b></div>').join('')+
+      (g.live[0]&&g.live[0].waybillNo?'<div class="doc-note">بارنامه: '+esc(g.live[0].waybillNo)+(g.live[0].carrier?' · '+esc(g.live[0].carrier):'')+'</div>':'')+
+      (atts.length?'<div class="doc-note">📎 '+atts.map(a=>'<a href="'+attUrlM(a)+'" target="_blank">'+esc(a.name)+'</a>').join(' · ')+'</div>':'')+
+      '<div class="doc-actions" style="flex-wrap:wrap">'+
+        (g.st==='pending'&&canShipDispatchM()?'<button class="ok-btn" onclick="S.dspSid=\''+esc(g.sid)+'\';S.dspQty=null;S.dspCarrier=\'\';S.dspWaybill=\'\';render()">🚚 ثبت ارسال</button>':'')+
+        ((g.st==='waybill'||g.st==='done')&&canShipDispatchM()?'<button class="mid-btn" onclick="pickWaybillM(\''+esc(g.sid)+'\')">📷 ضمیمه‌ی بارنامه</button>':'')+
+      '</div></div>'; }).join('')+'</div>';
+}
+function fileToUploadM(file){
+  return new Promise((resolve,reject)=>{
+    if(!file) return resolve(null);
+    if(file.type==='application/pdf'){ const r=new FileReader(); r.onload=()=>resolve({name:file.name,type:file.type,data:r.result}); r.onerror=reject; r.readAsDataURL(file); return; }
+    const img=new Image(), url=URL.createObjectURL(file);
+    img.onload=()=>{ const k=Math.min(1,1800/Math.max(img.width,img.height)), c=document.createElement('canvas'); c.width=Math.round(img.width*k); c.height=Math.round(img.height*k);
+      c.getContext('2d').drawImage(img,0,0,c.width,c.height); URL.revokeObjectURL(url); resolve({name:'waybill.jpg',type:'image/jpeg',data:c.toDataURL('image/jpeg',0.8)}); };
+    img.onerror=()=>reject(new Error('عکس خوانده نشد')); img.src=url;
+  });
+}
+async function submitShipM(){
+  if(S.busy||!S.dspSid) return;
+  const g=dispatchGroupsM().find(x=>x.sid===S.dspSid); if(!g) return;
+  const lines=g.live.filter(l=>l.status==='pending_dispatch').map(l=>({docId:l.id, qty:Number(S.dspQty[l.id])||0}));
+  if(!lines.some(l=>l.qty>0)) return toast('مقدارِ ارسال را وارد کنید', true);
+  const f=document.getElementById('dsp-file'); const file=f&&f.files[0];
+  S.busy=true;
+  try{
+    await api('/api/dispatch/'+encodeURIComponent(S.dspSid)+'/ship',{method:'POST',body:JSON.stringify({lines, carrier:S.dspCarrier||'', waybillNo:S.dspWaybill||''})});
+    if(file){ try{ const up=await fileToUploadM(file); await api('/api/dispatch/'+encodeURIComponent(S.dspSid)+'/attach',{method:'POST',body:JSON.stringify(Object.assign(up,{waybillNo:S.dspWaybill||''}))}); }catch(e){ toast('ارسال ثبت شد ولی بارنامه بارگذاری نشد: '+e.message, true); } }
+    S.dspSid=null; S.dspQty=null; await loadData(); render(); toast('ارسالِ بار ثبت شد'+(file?'':' - بارنامه را بعداً ضمیمه کنید'));
+  }catch(e){ toast(e.message, true); }
+  finally{ S.busy=false; }
+}
+function pickWaybillM(sid){
+  const inp=document.createElement('input'); inp.type='file'; inp.accept='image/*,application/pdf'; inp.setAttribute('capture','environment');
+  inp.onchange=async()=>{ const f=inp.files[0]; if(!f) return;
+    try{ const up=await fileToUploadM(f); await api('/api/dispatch/'+encodeURIComponent(sid)+'/attach',{method:'POST',body:JSON.stringify(up)}); await loadData(); render(); toast('بارنامه ضمیمه شد'); }
+    catch(e){ toast(e.message, true); } };
+  inp.click();
+}
+
+async function submitForm(){
+  if(S.busy || !S.item) return;
+  const dept = privileged()?S.dept:myDeptId();
+  const qty = parseFloat(S.qty)||0;
+  if(qty<=0) return toast('تعداد را وارد کنید', true);
+  const f = FORMS[S.screen];
+  let path, body;
+  if(S.screen==='consume'){ path='/api/doc/consume'; body={unit:dept, item:S.item, qty, note:S.note, date:docDateStr(), actorUsername:user.username}; }
+  else if(S.screen==='waste'){ path='/api/doc/waste'; body={unit:dept, item:S.item, qty, note:S.note, date:docDateStr(), actorUsername:user.username}; }
+  else if(S.screen==='adjust'){
+    const fks = S.adjustType==='excess' ? stageFormulaKeysM(S.item) : [];
+    if(fks.length>1 && !S.adjFk) return toast('نوعِ کابل (فرمول) را انتخاب کنید', true);
+    path='/api/doc/adjust'; body={unit:dept, item:S.item, qty, type:S.adjustType, note:S.note, date:docDateStr(), formulaKey: fks.length>1 ? S.adjFk : undefined, actorUsername:user.username}; }
+  else if(S.screen==='output'){
+    if(!S.target) return toast('بخش مقصد را انتخاب کنید', true);
+    path='/api/doc/output'; body={from:dept, to:S.target, item:S.item, qty, note:S.note, date:docDateStr(), createdBy:user.username};
+  }
+  S.busy = true;
+  try{
+    const r = await api(path, {method:'POST', body:JSON.stringify(body)});
+    resetDocDate();
+    await loadData(); S.docFilter='all'; go('docs');
+    toast(r.message || (f.submit+' انجام شد'));
+  }catch(e){ toast(e.message, true); }
+  finally{ S.busy=false; }
+}
+
+/* --- گزارش‌ها --- */
+function viewReports(){
+  const l = [['cardex','کاردکس کالا','گردش یک کالا در این بخش'],
+             ['daily','گزارش عملکرد روزانه','خلاصه فعالیت امروز بخش'],
+             ['history','تاریخچه تراکنش‌ها','همه ردیف‌های دفتر بخش']]
+    .filter(x=>canAccessSection(SCREEN_SECTION[x[0]]));
+  if(!l.length) return '<div class="empty">دسترسی به گزارش‌ها برای نقش شما بسته است</div>';
+  return '<div class="stack">'+l.map(x=>'<button class="link" onclick="go(\''+x[0]+'\')">'+
+    '<span class="grow"><span class="t" style="display:block">'+x[1]+'</span><span class="d">'+x[2]+'</span></span>'+
+    '<span class="go">&#8249;</span></button>').join('')+'</div>';
+}
+
+function viewCardex(dept){
+  const inv = (D.inventory||{})[dept]||{};
+  const codes = relevantCodes(dept, inv, true);
+  if(!S.cardexItem || !codes.includes(S.cardexItem)) S.cardexItem = codes[0] || null;
+  if(!S.cardexItem) return '<div class="empty">موجودی این بخش خالی است</div>';
+  const txs = (D.transactions||[]).filter(t=>t.unit===dept && t.item===S.cardexItem);
+  let bal = 0;
+  const rows = txs.map(t=>{
+    const sign = MINUS_TYPES.includes(t.type) ? -1 : 1;
+    bal += sign * (t.qty||0);
+    return {type:TYPE_LABELS[t.type]||t.type, date:t.date, delta:(sign<0?'\u2212 ':'+ ')+fmt(t.qty), bal:fmt(bal),
+      color: sign<0 ? 'var(--danger)' : 'var(--green)'};
+  }).reverse();
+  return '<div class="stack">'+
+    '<div class="chips">'+codes.map(c=>'<button class="chip'+(c===S.cardexItem?' on':'')+'" onclick="S.cardexItem=\''+esc(c)+'\';render()">'+esc(itemName(c))+'</button>').join('')+'</div>'+
+    '<div class="card"><div class="code">'+esc(S.cardexItem)+'</div><div class="iname" style="font-size:13.5px;font-weight:700">'+esc(itemName(S.cardexItem))+'</div>'+
+      '<div style="display:flex;gap:14px;margin-top:9px">'+
+        '<div><div class="k muted" style="font-size:10.5px">مانده فعلی</div><div style="font-size:16px;font-weight:800;direction:ltr">'+fmt(inv[S.cardexItem])+'</div></div>'+
+        '<div><div class="k muted" style="font-size:10.5px">واحد</div><div style="font-size:16px;font-weight:800">'+esc(itemUnit(S.cardexItem))+'</div></div>'+
+      '</div></div>'+
+    (rows.length ? rows.map(r=>'<div class="card tx"><div class="stripe" style="background:'+r.color+'"></div>'+
+      '<div class="grow"><div style="font-size:12.5px;font-weight:700">'+esc(r.type)+'</div><div class="unit" style="text-align:right;direction:ltr">'+esc(r.date)+'</div></div>'+
+      '<div><div class="qty" style="font-size:13.5px;color:'+r.color+'">'+r.delta+'</div><div class="unit" style="direction:ltr">مانده '+r.bal+'</div></div></div>').join('')
+      : '<div class="empty">گردشی برای این کالا ثبت نشده</div>')+
+  '</div>';
+}
+
+function viewDaily(dept){
+  const t = todayFa();
+  const txs = (D.transactions||[]).filter(x=>x.unit===dept && normFa(x.date)===t);
+  const sum = type => txs.filter(x=>x.type===type).reduce((s,x)=>s+(x.qty||0),0);
+  const rows = [['تولید','production','#3C3489'],['مصرف مواد','consume','#791F1F'],['ورود از بخش','input','#16a34a'],
+    ['خروج به بخش','output','#F5821F'],['ضایعات','waste','#854F0B'],['کسری','shortage','#791F1F'],['رسید انبار','receipt','#16a34a'],['اضافات','excess','#16a34a']];
+  return '<div class="stack">'+
+    '<div class="card" style="display:flex;justify-content:space-between;align-items:center"><span class="muted" style="font-size:12.5px">تاریخ گزارش</span>'+
+      '<span style="font-size:13.5px;font-weight:800;direction:ltr">'+esc(t)+'</span></div>'+
+    rows.map(r=>'<div class="card row-item"><div class="grow" style="font-size:13px;font-weight:600">'+r[0]+'</div>'+
+      '<div class="qty" style="font-size:15px;color:'+r[2]+'">'+fmt(sum(r[1]))+'</div></div>').join('')+
+    '<div class="card muted" style="font-size:11.5px">'+(txs.length?('مجموع '+fmt(txs.length)+' تراکنش امروز'):'امروز تراکنشی ثبت نشده')+'</div>'+
+  '</div>';
+}
+
+function viewHistory(dept){
+  const txs = (D.transactions||[]).filter(t=>privileged() ? true : t.unit===dept).slice().reverse().slice(0,120);
+  if(!txs.length) return '<div class="empty">تاریخچه خالی است</div>';
+  return '<div class="stack">'+txs.map(t=>{
+    const minus = MINUS_TYPES.includes(t.type);
+    const route = (t.sourceUnit?deptName(t.sourceUnit):deptName(t.unit)) + (t.targetUnit? ' \u2190 '+deptName(t.targetUnit) : '');
+    return '<div class="card">'+
+      '<div style="display:flex;justify-content:space-between;gap:8px;align-items:center">'+
+        '<span style="font-size:12.5px;font-weight:700">'+esc(TYPE_LABELS[t.type]||t.type)+'</span>'+
+        '<span class="qty" style="font-size:13px;color:'+(minus?'var(--danger)':'var(--green)')+'">'+(minus?'\u2212 ':'+ ')+fmt(t.qty)+'</span></div>'+
+      '<div class="unit" style="text-align:right;font-size:11.5px">'+esc(itemName(t.item))+'</div>'+
+      '<div class="doc-meta"><span>'+esc(route)+'</span><span style="direction:ltr">'+esc(t.date)+'</span></div>'+
+    '</div>';
+  }).join('')+'</div>';
+}
+
+/* --- بیشتر --- */
+function viewMore(){
+  const fy = (D.fiscalYears||[]).find(f=>f.year===D.activeFiscalYear);
+  const kv = [['سال مالی فعال', (fy?fy.title:D.activeFiscalYear)||'—'],
+    ['نقش', roleLabel(user.role)], ['بخش', user.unit||'—'],
+    ['آدرس سرور', API.replace(/^https?:\/\//,'')],
+    ['تعداد اسناد سال', fmt((D.docs||[]).filter(d=>d.fiscalYear===D.activeFiscalYear).length)],
+    ['نسخه اپ موبایل','1.0.0']];
+  let pushCard;
+  if(!pushSupported){
+    pushCard = '<div class="card kv"><span class="grow">نوتیفیکیشن گوشی</span><span class="v" style="color:var(--sub);font-size:11px">پشتیبانی نمی‌شود</span></div>';
+  } else if(Notification.permission==='denied'){
+    pushCard = '<div class="card kv"><span class="grow">نوتیفیکیشن گوشی</span><span class="v" style="color:var(--danger);font-size:11px">مسدود شده - از تنظیمات مرورگر/گوشی فعالش کنید</span></div>';
+  } else {
+    pushCard = '<button class="action" style="border-right:4px solid '+(pushSubscribed?'#791F1F':'#16a34a')+'" onclick="'+(pushSubscribed?'disablePush()':'enablePush()')+'">'+
+      '<span class="t">'+(pushSubscribed?'🔕 غیرفعال‌کردن نوتیفیکیشن':'🔔 فعال‌کردن نوتیفیکیشن گوشی')+'</span>'+
+      '<span class="d">'+(pushSubscribed?'برای اسناد در انتظار تایید دیگر نوتیفیکیشن نمی‌آید':'برای اسناد در انتظار تایید، حتی وقتی اپ بسته است نوتیفیکیشن بیاید')+'</span></button>';
+  }
+  return '<div class="stack">'+
+    '<div class="card" style="display:flex;align-items:center;gap:12px;padding:14px">'+
+      '<div class="avatar">'+esc((user.fullname||'?').trim().slice(0,1))+'</div>'+
+      '<div class="grow"><div style="font-size:14.5px;font-weight:700">'+esc(user.fullname)+'</div>'+
+      '<div class="unit" style="text-align:right;font-size:11.5px">'+esc(user.unit)+' · '+roleLabel(user.role)+'</div></div></div>'+
+    pushCard +
+    kv.map(x=>'<div class="card kv"><span class="grow">'+x[0]+'</span><span class="v">'+esc(x[1])+'</span></div>').join('')+
+    '<button class="logout" onclick="logout()">خروج از حساب</button>'+
+    '<div class="muted" style="font-size:11px;text-align:center;padding:4px 0 10px">این نسخه فقط برای موبایل است؛ نسخه وب دست‌نخورده در آدرس اصلی باقی است.</div>'+
+  '</div>';
+}
+
+/* ===== نوتیفیکیشن واقعیِ گوشی (Web Push) ===== */
+const pushSupported = ('serviceWorker' in navigator && 'PushManager' in window && typeof Notification !== 'undefined');
+let pushSubscribed = false;
+
+function urlBase64ToUint8Array(base64String){
+  const padding = '='.repeat((4 - base64String.length % 4) % 4);
+  const base64 = (base64String + padding).replace(/-/g,'+').replace(/_/g,'/');
+  const raw = atob(base64);
+  const arr = new Uint8Array(raw.length);
+  for(let i=0;i<raw.length;i++) arr[i] = raw.charCodeAt(i);
+  return arr;
+}
+
+async function checkPushStatus(){
+  if(!pushSupported) return;
+  try{
+    const reg = await navigator.serviceWorker.ready;
+    const sub = await reg.pushManager.getSubscription();
+    pushSubscribed = !!sub;
+    // اگه این دستگاه از قبل مشترکه ولی الان کاربرِ دیگه‌ای واردش شده (دستگاه مشترک)، مالکیتِ
+    // اشتراک روی سرور رو به کاربرِ فعلی به‌روز می‌کنیم - وگرنه نوتیفیکیشن‌ها برای کاربرِ قبلی
+    // ثبت می‌مونه.
+    if(sub) api('/api/push/subscribe', {method:'POST', body:JSON.stringify({username:user.username, subscription:sub.toJSON()})}).catch(()=>{});
+  }catch(e){}
+  if(S.screen==='more') render();
+}
+
+async function enablePush(){
+  if(!pushSupported) return toast('این مرورگر از نوتیفیکیشن پشتیبانی نمی‌کند', true);
+  try{
+    const perm = await Notification.requestPermission();
+    if(perm !== 'granted'){ toast('اجازه‌ی نوتیفیکیشن داده نشد', true); render(); return; }
+    const reg = await navigator.serviceWorker.ready;
+    const { publicKey } = await api('/api/push/vapid-public-key');
+    let sub = await reg.pushManager.getSubscription();
+    if(!sub) sub = await reg.pushManager.subscribe({ userVisibleOnly:true, applicationServerKey: urlBase64ToUint8Array(publicKey) });
+    await api('/api/push/subscribe', {method:'POST', body:JSON.stringify({username:user.username, subscription:sub.toJSON()})});
+    pushSubscribed = true;
+    toast('نوتیفیکیشن این دستگاه فعال شد');
+  }catch(e){ toast('فعال‌سازی نوتیفیکیشن ناموفق بود: '+e.message, true); }
+  render();
+}
+
+async function disablePush(){
+  try{
+    const reg = await navigator.serviceWorker.ready;
+    const sub = await reg.pushManager.getSubscription();
+    if(sub){
+      try{ await api('/api/push/unsubscribe', {method:'POST', body:JSON.stringify({endpoint:sub.endpoint})}); }catch(e){}
+      await sub.unsubscribe();
+    }
+    pushSubscribed = false;
+    toast('نوتیفیکیشن این دستگاه غیرفعال شد');
+  }catch(e){ toast('غیرفعال‌سازی ناموفق بود: '+e.message, true); }
+  render();
+}
+
+/* ===== راه‌اندازی ===== */
+if('serviceWorker' in navigator){
+  window.addEventListener('load', ()=>navigator.serviceWorker.register('./sw.js', {scope:'./'}).catch(()=>{}));
+}
+window.addEventListener('online', ()=>{ $('net').className='badge-net'; $('net').textContent='آنلاین'; pollVersion(); });
+window.addEventListener('offline', ()=>{ $('net').className='badge-net off'; $('net').textContent='آفلاین'; });
+
+(async function boot(){
+  const saved = localStorage.getItem('warehouseMobileUser');
+  if(!saved || !mToken()) return; // بدونِ توکن باید دوباره وارد شود
+  try{
+    const {username} = JSON.parse(saved);
+    await loadData();
+    const found = (D.users||[]).find(u=>u.username===username);
+    if(found){ user = found; startApp(); }
+  }catch(e){}
+})();
+</script>
+</body>
+</html>

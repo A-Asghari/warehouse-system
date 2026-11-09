@@ -1,0 +1,28 @@
+# ===== داده‌های واقعی و محرمانه (هرگز push نشود) =====
+# دیتابیس سیستم (موجودی، اسناد، کاربران، تنظیمات اتصال، کلید VAPID)
+db.json
+db.json.prev
+db.json.tmp*
+db.backup-*.json
+backups/
+# نشست‌های لاگین کاربران
+sessions.json
+# کلیدهای خصوصی HTTPS و CA
+certs/*-key.pem
+*.key
+*.pfx
+
+# ===== حجیم / قابل بازسازی =====
+node_modules/
+graphify-out/
+_BACKUP_*/
+Logs/
+service/logs/
+*.log
+
+# ===== تنظیمات محلی Claude و فایل‌های موقت =====
+.claude/
+Thumbs.db
+desktop.ini
+~$*
+node clear.js.txt

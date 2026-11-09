@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>سیستم مدیریت موجودی انبار</title>
+<link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- ===== مودال انتخاب بخش برای خروج خودکار ===== -->
+<div class="edit-modal-overlay" id="selectDeptModal">
+  <div class="edit-modal" style="max-width:450px;">
+    <h3>📤 انتخاب بخش مقصد</h3>
+    <p style="font-size:13px;color:var(--sub);margin-bottom:16px;">لطفاً بخشی که محصول به آن ارسال می‌شود را انتخاب کنید:</p>
+    <div class="form-group">
+      <select id="select-dept-list" style="width:100%;padding:10px;border:2px solid var(--line);border-radius:8px;font-size:14px;font-family:'Vazirmatn',sans-serif;">
+        <option value="">-- انتخاب بخش --</option>
+      </select>
+    </div>
+    <div class="modal-actions">
+      <button class="cancel-btn" onclick="closeSelectDeptModal()">❌ انصراف</button>
+      <button class="save-btn" onclick="confirmSelectDept()">✅ تایید و ارسال</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== مودال‌های دیگر ===== -->
+<div class="edit-modal-overlay" id="editProductModal">
+  <div class="edit-modal">
+    <h3>✏️ ویرایش محصول <button class="close-modal" onclick="closeEditProductModal()">✕</button></h3>
+    <div class="form-group"><label>🔢 کد محصول</label><input type="text" id="edit-product-code" placeholder="کد محصول را وارد کنید"></div>
+    <div class="form-group"><label>📝 عنوان محصول</label><input type="text" id="edit-product-name" placeholder="نام محصول را وارد کنید"></div>
+    <div class="form-group"><label>📂 گروه</label><input type="text" id="edit-product-group" placeholder="گروه محصول"></div>
+    <div class="form-group"><label>📏 واحد</label><select id="edit-product-unit"><option value="عدد">عدد</option><option value="متر">متر</option><option value="کیلوگرم">کیلوگرم</option><option value="لیتر">لیتر</option><option value="جعبه">جعبه</option><option value="کارتن">کارتن</option><option value="شاخه">شاخه</option><option value="بسته">بسته</option><option value="تن">تن</option><option value="گرم">گرم</option></select></div>
+    <input type="hidden" id="edit-product-dept"><input type="hidden" id="edit-product-old-code">
+    <div class="modal-actions"><button class="cancel-btn" onclick="closeEditProductModal()">❌ انصراف</button><button class="save-btn" onclick="saveProductEdit()">✅ ذخیره</button></div>
+  </div>
+</div>
+
+<div class="edit-modal-overlay" id="editUserModal">
+  <div class="edit-modal">
+    <h3>✏️ ویرایش کاربر <button class="close-modal" onclick="closeEditUserModal()">✕</button></h3>
+    <div class="form-group"><label>👤 یوزرنیم</label><input type="text" id="edit-user-username" readonly style="background:#f0f0f0;"></div>
+    <div class="form-group"><label>🔒 رمز عبور</label><input type="text" id="edit-user-password" placeholder="رمز عبور جدید"></div>
+    <div class="form-group"><label>📝 نام کامل</label><input type="text" id="edit-user-fullname" placeholder="نام و نام خانوادگی"></div>
+    <div class="form-group"><label>🏢 بخش</label><select id="edit-user-unit"></select></div>
+    <div class="form-group"><label>🎯 نقش</label><select id="edit-user-role"><option value="user">کاربر</option><option value="admin">مدیر</option></select></div>
+    <div class="modal-actions"><button class="cancel-btn" onclick="closeEditUserModal()">❌ انصراف</button><button class="save-btn" onclick="saveUserEdit()">✅ ذخیره</button></div>
+  </div>
+</div>
+
+<!-- ===== صفحه ورود ===== -->
+<div id="loginPage" class="login-page">
+  <div class="login-box">
+    <div class="logo"><div><span style="font-size:28px;display:block;line-height:1">HBG</span><span style="font-size:11px;letter-spacing:3px;font-weight:300">V-SMART</span></div></div>
+    <h1>سیستم مدیریت انبار</h1>
+    <p class="sub">ورود به سامانه</p>
+    <div class="form-group"><label>👤 نام کاربری</label><input type="text" id="loginUser" placeholder="نام کاربری را وارد کنید"></div>
+    <div class="form-group"><label>🔒 رمز عبور</label><input type="password" id="loginPass" placeholder="رمز عبور را وارد کنید" onkeydown="if(event.key==='Enter') doLogin()"></div>
+    <button class="btn-login" id="loginBtn" onclick="doLogin()">🚪 ورود به سیستم</button>
+    <div id="loginStatus" class="login-status"></div>
+    <div class="footer">نسخه 9.0 - سیستم مدیریت موجودی انبار</div>
+  </div>
+</div>
+
+<!-- ===== برنامه اصلی ===== -->
+<div id="appContainer" class="app-container">
+  <div class="header no-print">
+    <div class="brand">
+      <button class="hamburger-btn" onclick="toggleFullMenu()">☰</button>
+      <div class="logo-small">HBG</div>
+      <h1>📦 مدیریت انبار</h1>
+      <span id="connectionStatus" class="connection-status online">✅ آنلاین</span>
+    </div>
+    <div class="fiscal-controls">
+      <div class="fy-select"><label>📅 سال مالی:</label><select id="fiscalYearSelect" onchange="changeFiscalYear()"></select></div>
+      <span id="fyStatusBadge" class="fy-status active">فعال</span>
+    </div>
+    <div class="user-info" id="userInfo">
+      <span class="name" id="userName">کاربر</span>
+      <span class="unit" id="userUnit">بخش</span>
+      <button class="btn-logout" onclick="doLogout()">🚪 خروج</button>
+    </div>
+  </div>
+
+  <div id="fullMenuOverlay" class="full-menu-overlay no-print" onclick="closeFullMenu(event)">
+    <div class="full-menu-content" onclick="event.stopPropagation()">
+      <div class="menu-header"><h3>📋 منوی اصلی</h3><button class="menu-close" onclick="closeFullMenu()">✕</button></div>
+      <div class="menu-grid" id="fullMenuGrid"></div>
+      <div class="menu-footer"><button class="logout-btn" onclick="doLogout(); closeFullMenu();">🚪 خروج از حساب</button></div>
+    </div>
+  </div>
+
+  <nav class="desktop-nav no-print" id="desktopNav"></nav>
+
+  <div class="quick-actions no-print" id="quickActions">
+    <button class="action-btn" onclick="switchTab('sec-production')"><span class="icon">🏭</span><span>تولید</span></button>
+    <button class="action-btn" onclick="switchTab('sec-consume')"><span class="icon">📤</span><span>مصرف</span></button>
+    <button class="action-btn" onclick="switchTab('sec-output')"><span class="icon">📤</span><span>خروج</span></button>
+    <button class="action-btn" onclick="switchTab('sec-waste')"><span class="icon">🗑️</span><span>ضایعات</span></button>
+    <button class="action-btn" onclick="switchTab('sec-adjust')"><span class="icon">⚙️</span><span>تعدیل</span></button>
+    <button class="action-btn" onclick="switchTab('sec-documents')" id="quickDocBtn"><span class="icon">📋</span><span>اسناد</span><span class="nav-badge hidden" id="quickDocBadge">0</span></button>
+  </div>
+
+  <!-- ===== بخش‌های اصلی ===== -->
+  <section id="sec-dashboard"><div class="panel"><h2 id="dash-title">📊 موجودی انبار</h2><p class="hint" id="dash-hint"></p><div class="grid" id="dash-grid"></div></div></section>
+  
+  <section id="sec-daily-report"><div class="panel"><h2>📋 گزارش عملکرد روزانه</h2><p class="hint">گزارش کامل فعالیت‌های روزانه هر بخش</p><div class="filter-row no-print"><div class="field" style="flex:0.3"><label>🏭 انتخاب بخش</label><select id="report-unit" onchange="generateDailyReport()"></select></div><div class="field-date" style="flex:0.25"><label>📅 تاریخ گزارش</label><input type="text" id="report-date" placeholder="1405/01/01"></div><div class="field" style="flex:0.2;display:flex;align-items:flex-end"><button class="primary" onclick="generateDailyReport()" style="width:100%;padding:6px 12px;font-size:12px">🔍 نمایش</button></div><div class="field" style="flex:0.2;display:flex;align-items:flex-end"><button class="print-btn" onclick="printReport()" style="width:100%;padding:6px 12px;font-size:12px">🖨️ پرینت</button></div></div><div id="report-container" class="report-container"></div></div></section>
+
+  <section id="sec-cardex"><div class="panel"><h2>📊 کاردکس انبار</h2><p class="hint">انتخاب بخش و کالا با بازه تاریخی دلخواه</p><div class="filter-row"><div class="field"><label>🏭 بخش</label><select id="cardex-unit" onchange="fillCardexItems()"></select></div><div class="field"><label>📦 کالا</label><select id="cardex-item" onchange="renderCardex()"></select></div><div class="field" style="flex:0.4"><label>واحد شمارش</label><select id="cardex-unit-type"><option value="عدد">عدد</option><option value="متر">متر</option><option value="کیلوگرم">کیلوگرم</option><option value="لیتر">لیتر</option><option value="جعبه">جعبه</option></select></div></div><div class="filter-row"><div class="field-date"><label>📅 از تاریخ</label><input type="text" id="cardex-date-from" placeholder="1405/01/01"></div><div class="field-date"><label>📅 تا تاریخ</label><input type="text" id="cardex-date-to" placeholder="1405/12/29"></div><div class="field" style="flex:0.3;display:flex;align-items:flex-end"><button class="primary" onclick="renderCardex()" style="width:100%;padding:6px 12px;font-size:12px">🔍 اعمال</button></div><div class="field" style="flex:0.2;display:flex;align-items:flex-end"><button class="gold" onclick="setCardexYearRange()" style="width:100%;padding:6px 12px;font-size:12px">📅 کل سال</button></div></div><div id="cardex-container"></div></div></section>
+
+  <section id="sec-summary"><div class="panel"><h2>📊 گزارش موجودی کل</h2><p class="hint">جمع‌آوری همه کالاها با قابلیت فیلتر تاریخ</p><div class="filter-row"><div class="field-date"><label>📅 از تاریخ</label><input type="text" id="summary-date-from" placeholder="1405/01/01"></div><div class="field-date"><label>📅 تا تاریخ</label><input type="text" id="summary-date-to" placeholder="1405/12/29"></div><div class="field" style="flex:0.3;display:flex;align-items:flex-end"><button class="primary" onclick="renderSummary()" style="width:100%;padding:6px 12px;font-size:12px">🔍 اعمال</button></div><div class="field" style="flex:0.2;display:flex;align-items:flex-end"><button class="gold" onclick="setSummaryYearRange()" style="width:100%;padding:6px 12px;font-size:12px">📅 کل سال</button></div></div><div id="summary-container"></div></div></section>
+
+  <section id="sec-sync"><div class="panel"><h2>🔄 همگام‌سازی با سپیدار</h2><p class="hint">دریافت کالاها و موجودی از انبار تولید - مواد اولیه (سال مالی 13)</p><div class="row"><div class="field" style="flex:0.2"><label>📅 سال مالی</label><input type="number" id="sync-fiscal-year" value="13" style="width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:8px;font-family:'Vazirmatn',sans-serif;font-size:13px"></div><div class="field" style="flex:0.2;display:flex;align-items:flex-end"><button class="primary" onclick="syncFromSepidar()" style="width:100%;padding:10px 16px;font-size:14px">🔄 همگام‌سازی موجودی</button></div><div class="field" style="flex:0.2;display:flex;align-items:flex-end"><button class="gold" onclick="testSepidarConnection()" style="width:100%;padding:10px 16px;font-size:14px">🔌 تست اتصال</button></div><div class="field" style="flex:0.4;display:flex;align-items:center"><span id="sync-status" style="font-size:13px;color:var(--sub)">وضعیت: آماده</span></div></div><div id="sync-result" style="margin-top:10px;font-size:13px"></div></div></section>
+
+  <section id="sec-fiscal"><div class="panel"><h2>📅 مدیریت سال مالی</h2><p class="hint">ایجاد سال مالی جدید، فعال‌سازی و بستن سال مالی</p><div class="row"><div class="field"><label>سال مالی *</label><input type="text" id="fy-new-year" placeholder="1406" required></div><div class="field"><label>عنوان دوره</label><input type="text" id="fy-new-title" placeholder="سال مالی 1406"></div><div class="field" style="flex:0.3;display:flex;align-items:flex-end"><button class="success" onclick="createFiscalYear()" style="width:100%">➕ ایجاد</button></div></div><div id="fy-list"></div></div></section>
+
+  <section id="sec-initial-inv"><div class="panel"><h2>📊 ثبت موجودی اول دوره</h2><p class="hint">ثبت موجودی اولیه برای هر بخش و کالا</p><div class="initial-inv-row"><div class="row"><div class="field"><label>🏭 بخش</label><select id="initial-unit"></select></div><div class="field"><label>📦 کالا</label><div class="search-container"><input type="text" id="initial-item-search" placeholder="جستجوی کالا..." oninput="filterInitialItems()"><div id="initial-suggestions" class="suggestions"></div><input type="hidden" id="initial-item" value=""></div></div><div class="field"><label>📊 موجودی</label><input type="number" id="initial-qty" min="0" value="0"></div><div class="field" style="flex:0.3;display:flex;align-items:flex-end"><button class="primary" onclick="registerInitialInventory()" style="width:100%">✅ ثبت</button></div></div></div><div id="initial-msg" style="margin-top:8px;font-size:12.5px"></div></div></section>
+
+  <section id="sec-products-mgmt"><div class="panel"><h2>🏭 تعریف محصولات بخش</h2><p class="hint">تعریف محصولاتی که هر بخش می‌تواند تولید کند - با کد، عنوان، گروه و واحد</p><div style="background:var(--accent-l);padding:16px;border-radius:12px;margin-bottom:16px;border:1px solid var(--accent);"><div class="row"><div class="field" style="flex:0.2;"><label>🏭 بخش</label><select id="product-dept" onchange="loadDeptProducts()"></select></div><div class="field" style="flex:0.15;"><label>🔢 کد محصول</label><input type="text" id="product-code" placeholder="مثال: P-1001"></div><div class="field" style="flex:0.25;"><label>📝 عنوان محصول</label><input type="text" id="product-name" placeholder="نام محصول را وارد کنید"></div><div class="field" style="flex:0.2;"><label>📂 گروه</label><input type="text" id="product-group" placeholder="گروه محصول"></div><div class="field" style="flex:0.15;"><label>📏 واحد</label><select id="product-unit"><option value="عدد">عدد</option><option value="متر">متر</option><option value="کیلوگرم">کیلوگرم</option><option value="لیتر">لیتر</option><option value="جعبه">جعبه</option><option value="کارتن">کارتن</option><option value="شاخه">شاخه</option><option value="بسته">بسته</option><option value="تن">تن</option><option value="گرم">گرم</option></select></div><div class="field" style="flex:0.1;display:flex;align-items:flex-end;"><button class="success" onclick="saveProductDefinition()" style="width:100%;padding:8px 12px;">➕ افزودن</button></div></div><div id="product-msg" style="font-size:12px;margin-top:6px;"></div></div><div class="generate-btn-box" style="margin-top:12px;"><div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;"><button class="btn-big success" onclick="generateProductsFromDept()">📋 کپی محصولات از بخش دیگر</button><button class="btn-big danger" onclick="clearDeptProducts()">🗑️ حذف همه محصولات این بخش</button><span style="font-size:12px;color:var(--sub);">(محصولات یک بخش را خوانده و با پسوند دلخواه در بخش فعلی ایجاد می‌کند)</span></div><div id="laser-generate-status" style="margin-top:8px;font-size:13px;"></div></div><div style="margin-top:16px;border-top:2px solid var(--line);padding-top:12px;"><div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:10px;"><h3 style="font-size:14px;">📋 لیست محصولات بخش</h3><div style="display:flex;gap:8px;flex-wrap:wrap;"><input type="text" id="product-search-filter" placeholder="جستجو..." oninput="filterProductList()" style="width:200px;padding:6px 10px;border:1px solid var(--line);border-radius:8px;font-size:12px;"></div></div><div id="dept-products-list"></div></div></div></section>
+
+  <!-- ===== فرم تولید ===== -->
+  <section id="sec-production">
+    <div class="panel">
+      <h2>🏭 ثبت تولید</h2>
+      <div class="row"><div class="field"><label>🏭 بخش</label><select id="prod-unit" onchange="fillProductionForm()"></select><div id="prod-unit-lock" class="dept-locked"></div></div></div>
+      <div class="row"><div class="field" style="flex:0.3;"><label>🎯 روش تولید</label><select id="prod-method" onchange="toggleProdMethod()"><option value="manual">✋ تولید دستی (ثبت مصرف جداگانه)</option><option value="from-materials">📦 تولید از مواد دریافتی</option></select></div></div>
+      <div class="row"><div class="field-item"><label>📦 کالا</label><div class="search-container"><input type="text" id="prod-item-search" placeholder="جستجوی محصول..." oninput="filterProdItems()"><div id="prod-suggestions" class="suggestions"></div><input type="hidden" id="prod-item" value=""></div></div></div>
+      <div class="row"><div class="field-small"><label>🔢 تعداد</label><input type="number" id="prod-qty" min="1" value="1"></div><div class="field-unit"><label>📏 واحد</label><select id="prod-unit-type"><option value="عدد">عدد</option><option value="متر">متر</option><option value="کیلوگرم">کیلوگرم</option><option value="لیتر">لیتر</option><option value="جعبه">جعبه</option></select></div><div class="field-2"><label>📝 توضیح</label><input type="text" id="prod-note" placeholder="تولید روزانه"></div></div>
+      
+      <div id="prod-materials-section" style="display:none;background:var(--accent-l);padding:16px;border-radius:12px;margin:12px 0;border:1px solid var(--accent);">
+        <h4 style="font-size:14px;margin-bottom:8px;">📋 مواد مصرفی در این تولید</h4>
+        <p class="hint" style="font-size:11px;">کالاهای دریافتی از بخش قبلی که در این تولید استفاده شده‌اند را انتخاب کنید</p>
+        <div style="margin-bottom:10px;"><button class="primary" onclick="addMaterialRow()" style="font-size:12px;padding:4px 12px;">➕ افزودن ردیف</button><button class="danger" onclick="clearAllMaterialRows()" style="font-size:12px;padding:4px 12px;">🗑️ پاک کردن همه</button></div>
+        <table class="materials-table" id="materials-table"><thead><tr><th style="width:30px;">#</th><th>کالا</th><th>واحد</th><th style="width:120px;">تعداد مصرف</th><th style="width:40px;">حذف</th></tr></thead><tbody id="materials-tbody"></tbody><tfoot><tr class="total-row"><td colspan="5" style="text-align:center;">مجموع مواد مصرفی: <span id="materials-total-count">0</span> قلم</td></tr></tfoot></table>
+        <div id="selected-materials-list" style="margin-top:10px;font-size:12px;"></div>
+      </div>
+      
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;"><button class="purple" onclick="registerProduction()">🏭 ثبت تولید</button><button class="print-doc-btn" onclick="printProductionForm()">🖨️ پرینت فرم تولید</button></div>
+      <div id="prod-msg" style="margin-top:8px;font-size:12.5px"></div>
+    </div>
+  </section>
+
+  <!-- ===== فرم مصرف ===== -->
+  <section id="sec-consume">
+    <div class="panel">
+      <h2>📤 ثبت مصرف</h2>
+      <div class="row"><div class="field"><label>🏭 بخش</label><select id="consume-unit" onchange="fillConsumeForm()"></select><div id="consume-unit-lock" class="dept-locked"></div></div></div>
+      <div class="row"><div class="field-item"><label>📦 کالا</label><select id="consume-item" onchange="updateConsumeUnit()"><option value="">ابتدا بخش را انتخاب کنید</option></select></div></div>
+      <div class="row"><div class="field-small"><label>🔢 تعداد</label><input type="number" id="consume-qty" min="1" value="1"></div><div class="field-unit"><label>📏 واحد</label><select id="consume-unit-type"><option value="عدد">عدد</option><option value="متر">متر</option><option value="کیلوگرم">کیلوگرم</option><option value="لیتر">لیتر</option><option value="جعبه">جعبه</option></select></div><div class="field-2"><label>📝 توضیح</label><input type="text" id="consume-note" placeholder="مصرف در تولید"></div></div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;"><button class="danger" onclick="registerConsume()">📤 ثبت مصرف</button><button class="print-doc-btn" onclick="printConsumeForm()">🖨️ پرینت فرم مصرف</button></div>
+      <div id="consume-msg" style="margin-top:8px;font-size:12.5px"></div>
+    </div>
+  </section>
+
+  <!-- ===== فرم خروج ===== -->
+  <section id="sec-output">
+    <div class="panel">
+      <h2>📤 ثبت خروج به بخش دیگر</h2>
+      <div class="row"><div class="field"><label>🏭 از بخش</label><select id="output-from" onchange="fillOutputForm()"></select><div id="output-from-lock" class="dept-locked"></div></div><div class="field"><label>🏭 به بخش</label><select id="output-to" onchange="updateOutputItems()"></select></div></div>
+      <div class="row"><div class="field-item"><label>📦 کالا</label><select id="output-item" onchange="updateOutputUnit()"><option value="">ابتدا بخش مبدأ و مقصد را انتخاب کنید</option></select></div></div>
+      <div class="row"><div class="field-small"><label>🔢 تعداد</label><input type="number" id="output-qty" min="1" value="1"></div><div class="field-unit"><label>📏 واحد</label><select id="output-unit-type"><option value="عدد">عدد</option><option value="متر">متر</option><option value="کیلوگرم">کیلوگرم</option><option value="لیتر">لیتر</option><option value="جعبه">جعبه</option></select></div><div class="field-2"><label>📝 توضیح</label><input type="text" id="output-note" placeholder="ارسال به بخش"></div></div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;"><button class="primary" onclick="registerOutput()">📤 ثبت خروج</button><button class="print-doc-btn" onclick="printOutputForm()">🖨️ پرینت فرم خروج</button></div>
+      <div id="output-msg" style="margin-top:8px;font-size:12.5px"></div>
+    </div>
+  </section>
+
+  <!-- ===== فرم ضایعات ===== -->
+  <section id="sec-waste">
+    <div class="panel">
+      <h2>🗑️ ثبت ضایعات</h2>
+      <div class="row"><div class="field"><label>🏭 بخش</label><select id="waste-unit" onchange="fillWasteForm()"></select><div id="waste-unit-lock" class="dept-locked"></div></div><div class="field"><label>📦 کالا</label><select id="waste-item" onchange="updateWasteUnit()"></select></div><div class="field"><label>🔢 تعداد</label><input type="number" id="waste-qty" min="1" value="1"></div><div class="field"><label>📏 واحد</label><select id="waste-unit-type"><option value="عدد">عدد</option><option value="متر">متر</option><option value="کیلوگرم">کیلوگرم</option><option value="لیتر">لیتر</option><option value="جعبه">جعبه</option></select></div><div class="field-2"><label>📝 توضیح</label><input type="text" id="waste-note" placeholder="ضایعات تولید"></div></div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;"><button class="danger" onclick="registerWaste()">🗑️ ثبت ضایعات</button><button class="print-doc-btn" onclick="printWasteForm()">🖨️ پرینت فرم ضایعات</button></div>
+      <div id="waste-msg" style="margin-top:8px;font-size:12.5px"></div>
+    </div>
+  </section>
+
+  <!-- ===== فرم کسری و اضافات ===== -->
+  <section id="sec-adjust">
+    <div class="panel">
+      <h2>⚙️ ثبت کسری و اضافات</h2>
+      <div class="row"><div class="field"><label>🏭 بخش</label><select id="adjust-unit" onchange="fillAdjustForm()"></select><div id="adjust-unit-lock" class="dept-locked"></div></div><div class="field"><label>📦 کالا</label><select id="adjust-item" onchange="updateAdjustUnit()"></select></div><div class="field"><label>🔢 تعداد</label><input type="number" id="adjust-qty" min="1" value="1"></div><div class="field"><label>📏 واحد</label><select id="adjust-unit-type"><option value="عدد">عدد</option><option value="متر">متر</option><option value="کیلوگرم">کیلوگرم</option><option value="لیتر">لیتر</option><option value="جعبه">جعبه</option></select></div><div class="field" style="flex:0.7"><label>📊 نوع</label><select id="adjust-type"><option value="shortage">📉 کسری</option><option value="excess">📈 اضافات</option></select></div></div>
+      <div class="row"><div class="field-2"><label>📝 توضیح</label><input type="text" id="adjust-note" placeholder="تعدیل موجودی"></div></div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;"><button class="primary" onclick="registerAdjust()">✅ ثبت تعدیل</button><button class="print-doc-btn" onclick="printAdjustForm()">🖨️ پرینت فرم تعدیل</button></div>
+      <div id="adjust-msg" style="margin-top:8px;font-size:12.5px"></div>
+    </div>
+  </section>
+
+  <!-- ===== اسناد ===== -->
+  <section id="sec-documents">
+    <div class="panel">
+      <h2>📋 لیست اسناد صادر شده</h2>
+      <p class="hint">مشاهده، تایید و برگشت اسناد</p>
+      <div class="doc-actions-bar no-print">
+        <div class="filter-row" style="flex:1;margin-bottom:0;padding:8px 12px;">
+          <div class="field" style="flex:0.3;min-width:120px;"><label>وضعیت</label><select id="doc-filter-status" onchange="renderDocuments()"><option value="all">همه</option><option value="pending">در انتظار تایید</option><option value="approved">تایید شده</option><option value="cancelled">لغو شده</option><option value="return_pending">در انتظار برگشت</option><option value="return_approved">برگشت تایید</option><option value="return_rejected">برگشت لغو</option></select></div>
+          <div class="field" style="flex:0.3;min-width:120px;"><label>نوع سند</label><select id="doc-filter-type" onchange="renderDocuments()"><option value="all">همه</option><option value="production">تولید</option><option value="consume">مصرف</option><option value="output">خروج</option><option value="return">برگشت</option><option value="waste">ضایعات</option><option value="shortage">کسری</option><option value="excess">اضافات</option><option value="initial">موجودی اولیه</option></select></div>
+          <div class="field" style="flex:0.2;display:flex;align-items:flex-end"><button class="primary" onclick="renderDocuments()" style="width:100%;padding:6px 12px;font-size:12px">🔍 اعمال</button></div>
+        </div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;"><button class="excel-btn" onclick="exportDocumentsToExcel()" style="padding:8px 16px;font-size:13px;">📊 خروجی اکسل</button></div>
+      </div>
+      <div id="documents-list"></div>
+    </div>
+  </section>
+
+  <!-- ===== مدیریت کالاها ===== -->
+  <section id="sec-items">
+    <div class="panel">
+      <h2>📦 مدیریت کالاها</h2>
+      <p class="hint">تعریف و مدیریت کالاها با کد، عنوان، گروه و واحد</p>
+      <div style="background:var(--accent-l);padding:16px;border-radius:12px;margin-bottom:16px;border:1px solid var(--accent);"><div class="row"><div class="field" style="flex:0.2;"><label>🔢 کد کالا</label><input type="text" id="item-code" placeholder="مثال: 1001"></div><div class="field" style="flex:0.3;"><label>📝 عنوان کالا</label><input type="text" id="item-name" placeholder="نام کالا را وارد کنید"></div><div class="field" style="flex:0.25;"><label>📂 گروه</label><input type="text" id="item-group" placeholder="گروه کالا"></div><div class="field" style="flex:0.15;"><label>📏 واحد</label><select id="item-unit"><option value="عدد">عدد</option><option value="متر">متر</option><option value="کیلوگرم">کیلوگرم</option><option value="لیتر">لیتر</option><option value="جعبه">جعبه</option><option value="کارتن">کارتن</option><option value="شاخه">شاخه</option><option value="بسته">بسته</option><option value="تن">تن</option><option value="گرم">گرم</option><option value="میلی‌متر">میلی‌متر</option><option value="سانتی‌متر">سانتی‌متر</option></select></div><div class="field" style="flex:0.1;display:flex;align-items:flex-end;"><button class="success" onclick="addItem()" style="width:100%;padding:8px 12px;">➕ افزودن</button></div></div><div id="item-msg" style="font-size:12px;color:var(--sub);margin-top:6px;"></div></div>
+      <div class="row"><div class="field" style="flex:0.3"><button class="gold" onclick="syncItemsFromSepidar()" style="width:100%;padding:10px 16px;font-size:14px">🔄 همگام‌سازی کالاها از سپیدار</button></div><div class="field" style="flex:0.7;display:flex;align-items:center"><span id="sync-items-status" style="font-size:13px;color:var(--sub)">وضعیت: آماده</span></div></div><div id="sync-items-result" style="margin-top:10px;font-size:13px"></div>
+      <div style="margin-top:16px;border-top:2px solid var(--line);padding-top:12px;"><div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:10px;"><h3 style="font-size:14px;">📋 لیست کالاها</h3><div style="display:flex;gap:8px;flex-wrap:wrap;"><input type="text" id="item-search-filter" placeholder="جستجو..." oninput="filterItemsList()" style="width:200px;padding:6px 10px;border:1px solid var(--line);border-radius:8px;font-size:12px;"><button class="danger" onclick="deleteSelectedItem()" style="padding:4px 12px;font-size:12px;">🗑️ حذف</button></div></div><div id="items-list"></div></div>
+    </div>
+  </section>
+
+  <!-- ===== مدیریت کاربران ===== -->
+  <section id="sec-users-mgmt">
+    <div class="panel">
+      <h2>👤 مدیریت کاربران</h2>
+      <div class="row"><div class="field"><label>یوزرنیم *</label><input type="text" id="user-username" placeholder="نام کاربری" required></div><div class="field"><label>پسورد *</label><input type="text" id="user-password" placeholder="رمز عبور" required></div><div class="field"><label>نام کامل *</label><input type="text" id="user-fullname" placeholder="نام و نام خانوادگی" required></div><div class="field"><label>بخش</label><select id="user-unit"></select></div><div class="field" style="flex:0.5"><label>نقش</label><select id="user-role"><option value="user">کاربر</option><option value="admin">مدیر</option></select></div></div>
+      <div class="row"><button class="primary" onclick="addUser()" style="flex:0.2">➕ افزودن</button><button class="danger" onclick="deleteUser()" style="flex:0.2">🗑️ حذف</button><span id="user-msg" style="font-size:12px;color:var(--sub);padding:8px"></span></div>
+      <div style="margin-top:16px;border-top:2px solid var(--line);padding-top:12px"><h3 style="font-size:14px;margin-bottom:8px">👥 لیست کاربران</h3><div id="users-list"></div></div>
+    </div>
+  </section>
+
+  <!-- ===== بکاپ ===== -->
+  <section id="sec-backup">
+    <div class="panel">
+      <h2>💾 بکاپ و بازیابی</h2>
+      <div class="row"><button class="success" onclick="backupData()" style="flex:0.2">📥 دریافت بکاپ</button><button class="primary" onclick="document.getElementById('restoreFile').click()" style="flex:0.2">📤 بازیابی</button><input type="file" id="restoreFile" accept=".json" style="display:none" onchange="restoreData(event)"><span id="backup-msg" style="font-size:12px;color:var(--sub);padding:8px"></span></div>
+    </div>
+  </section>
+
+  <!-- ===== تاریخچه (جدولی) ===== -->
+  <section id="sec-history">
+    <div class="panel">
+      <h2 id="history-title">📜 تاریخچه</h2>
+      <div id="history-list"></div>
+    </div>
+  </section>
+</div>
+
+<!-- ===== منوی موبایل ===== -->
+<div class="mobile-bottom-nav no-print" id="mobileBottomNav">
+  <div class="nav-items">
+    <button class="nav-item active" data-target="sec-dashboard" onclick="switchTab('sec-dashboard')"><span class="icon">📊</span><span>موجودی</span></button>
+    <button class="nav-item" data-target="sec-production" onclick="switchTab('sec-production')"><span class="icon">🏭</span><span>تولید</span></button>
+    <button class="nav-item" data-target="sec-output" onclick="switchTab('sec-output')"><span class="icon">📤</span><span>خروج</span></button>
+    <button class="nav-item" data-target="sec-documents" onclick="switchTab('sec-documents')"><span class="icon">📋</span><span>اسناد</span><span class="nav-badge-mobile" id="mobileDocBadge" style="display:none;">0</span></button>
+    <button class="nav-item" onclick="toggleFullMenu()"><span class="icon">☰</span><span>بیشتر</span></button>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<!-- ===== لایه بارگذاری سراسری ===== -->
+<div class="app-loading-overlay no-print" id="appLoadingOverlay">
+  <div class="app-loading-spinner"></div>
+  <div class="app-loading-text" id="appLoadingText">در حال بارگذاری اطلاعات...</div>
+</div>
+
+<!-- ===== مودال تایید سفارشی ===== -->
+<div class="confirm-modal-overlay no-print" id="confirmModalOverlay">
+  <div class="confirm-modal">
+    <div class="confirm-modal-icon" id="confirmModalIcon">⚠️</div>
+    <div class="confirm-modal-msg" id="confirmModalMsg"></div>
+    <div class="confirm-modal-details" id="confirmModalDetails" style="display:none;"></div>
+    <div class="confirm-modal-actions" id="confirmModalActions"></div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+{
+  "name": "warehouse-system",
+  "version": "1.0.0",
+  "description": "سیستم مدیریت انبار تحت شبکه",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "https-cert": "node generate-https-cert.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.6",
+    "express": "^4.22.2",
+    "lowdb": "^5.0.5",
+    "mssql": "^12.7.0",
+    "multer": "^2.2.0",
+    "node-forge": "^1.4.0",
+    "web-push": "^3.6.7",
+    "xlsx": "^0.18.5"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs"
+}
